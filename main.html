@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Final Project - Ferris Wheel</title>
+
+    <style>
+        html,
+        body {
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #renderCanvas {
+            width: 100%;
+            height: 100%;
+            touch-action: none;
+        }
+    </style>
+
+    <script src="https://preview.babylonjs.com/babylon.js"></script>
+    <script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+
+    <script>
+        var canvas = null;
+        var engine = null;
+
+        /******* Add the create scene function ******/
+        var createScene = function () {
+            var scene = new BABYLON.Scene(engine);
+
+            var camera = new BABYLON.ArcRotateCamera("Camera", 0, 0, 0, BABYLON.Vector3.Zero(), scene);
+            camera.setPosition(new BABYLON.Vector3(-10, 250, 400));
+            camera.attachControl(canvas, true);
+
+            var light = new BABYLON.HemisphericLight("hemi", new BABYLON.Vector3(0, 1, 0), scene);
+
+            var ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 200, height: 200 }, scene);
+
+            function tube_circle() {
+                circle_points = [];
+                for (let i = 0; i <= 360; i++) {
+                    let angle = i * (2 * Math.PI / 360);
+                    circle_points.push(new BABYLON.Vector3((1 + Math.cos(angle)) * 50, (Math.sin(angle)) * 50, 0));
+                }
+                return circle = BABYLON.MeshBuilder.CreateTube("lines", { path: circle_points, radius: 0.5 }, scene);
+            }
+
+            function support() {
+                support_points = [
+                    new BABYLON.Vector3(0, 0, 0),
+                    new BABYLON.Vector3(0, 50, 0),
+                    new BABYLON.Vector3(0, 50, -10),
+                    new BABYLON.Vector3(0, 0, -10),
+                    new BABYLON.Vector3(0, 0, 0),
+                    new BABYLON.Vector3(0, 12.5, -10),
+                    new BABYLON.Vector3(0, 25, 0),
+                    new BABYLON.Vector3(0, 37.5, -10),
+                    new BABYLON.Vector3(0, 50, 0),
+                    new BABYLON.Vector3(0, 37.5, 0),
+                    new BABYLON.Vector3(0, 37.5, -10),
+                    new BABYLON.Vector3(0, 25, -10),
+                    new BABYLON.Vector3(0, 25, 0),
+                    new BABYLON.Vector3(0, 12.5, 0),
+                    new BABYLON.Vector3(0, 12.5, -10)
+                ];
+                return BABYLON.MeshBuilder.CreateTube("support", { path: support_points, radius: 0.3 }, scene);
+            }
+
+            function ferris_wheel() {
+                circle1 = tube_circle();
+                circle1.position = new BABYLON.Vector3(-75, 100, -5)
+                circle1.scaling = new BABYLON.Vector3(1.5, 1.5, 1.5);
+
+                circle2 = tube_circle();
+                circle2.position = new BABYLON.Vector3(-75, 100, 10);
+                circle2.scaling = new BABYLON.Vector3(1.5, 1.5, 1.5);
+
+                var center = BABYLON.MeshBuilder.CreateCylinder("center", {height: 0, diameter: 0}, scene);
+                center.position = new BABYLON.Vector3(0, 100, 2.5);
+                center.addRotation(0, 0, 0);
+
+                center.addChild(circle1);
+                center.addChild(circle2);
+                
+                let counter = 0;
+                let angle = 0;
+                while (counter < 8) {
+                    support_beam = support();
+                    support_beam.position = new BABYLON.Vector3(0, 100, 10);
+                    support_beam.addRotation(0, 0, angle);
+                    support_beam.scaling = new BABYLON.Vector3(1.5, 1.5, 1.5);
+                    center.addChild(support_beam);
+                    counter = counter + 1;
+                    angle = angle + Math.PI / 4;
+                }
+
+                const animWheel = new BABYLON.Animation("wheelAnimation", "rotation.z", 30, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE);
+                const wheelKeys = [{frame: 0, value: 0}, {frame: 30,value: -Math.PI/14}];
+                animWheel.setKeys(wheelKeys);
+                center.animations = [animWheel];
+                //scene.beginAnimation(center, 0, 30, true);
+            }
+
+            ferris_wheel();
+            //supports();
+            // support.position = new BABYLON.Vector3(0, 70, 10);
+            // support.addRotation(0, 0, Math.PI/2);
+            return scene;
+        }
+        /******* End of the create scene function ******/
+
+        function init() {
+            canvas = document.getElementById("renderCanvas");
+            engine = new BABYLON.Engine(
+                canvas,
+                true,
+                { preserveDrawingBuffer: true, stencil: true, disableWebGL2Support: false }
+            );
+
+            let scene = createScene();
+
+            // Register a render loop to repeatedly render the scene
+            engine.runRenderLoop(function () {
+                scene.render();
+            });
+
+            // Watch for browser/canvas resize events
+            window.addEventListener("resize", function () {
+                engine.resize();
+            });
+
+        }
+
+    </script>
+
+</head>
+
+<body onload="init()">
+    <canvas id="renderCanvas"></canvas>
+</body>
+
+</html>
