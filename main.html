@@ -34,7 +34,7 @@
             var scene = new BABYLON.Scene(engine);
 
             var camera = new BABYLON.ArcRotateCamera("Camera", 0, 0, 0, BABYLON.Vector3.Zero(), scene);
-            camera.setPosition(new BABYLON.Vector3(-10, 250, 400));
+            camera.setPosition(new BABYLON.Vector3(-10, 280, 400));
             camera.attachControl(canvas, true);
 
             var light = new BABYLON.HemisphericLight("hemi", new BABYLON.Vector3(0, 1, 0), scene);
@@ -71,6 +71,32 @@
                 return BABYLON.MeshBuilder.CreateTube("support", { path: support_points, radius: 0.3 }, scene);
             }
 
+            function stand() {
+                var stand = BABYLON.MeshBuilder.CreateBox("stand", {height: 120, width: 7, depth: 7},scene)
+                return stand;
+            }
+
+            function stands() {
+                f_stand1 = stand();
+                f_stand2 = stand();
+                b_stand1 = stand();
+                b_stand2 = stand();
+
+                f_stand1.position = new BABYLON.Vector3(30, 46, 20);
+                f_stand1.addRotation(0, 0, Math.PI/6);
+                f_stand2.position = new BABYLON.Vector3(-30, 46, 20);
+                f_stand2.addRotation(0, 0, -Math.PI/6);
+
+                b_stand1.position = new BABYLON.Vector3(30, 46, -15);
+                b_stand1.addRotation(0, 0, Math.PI/6);
+                b_stand2.position = new BABYLON.Vector3(-30, 46, -15);
+                b_stand2.addRotation(0, 0, -Math.PI/6);
+                
+                stand_center = BABYLON.MeshBuilder.CreateCylinder("stand_center", {height:42, diameter: 12}, scene);
+                stand_center.position = new BABYLON.Vector3(0, 100, 2.5);
+                stand_center.addRotation(Math.PI/2, 0, 0);
+            }
+
             function ferris_wheel() {
                 circle1 = tube_circle();
                 circle1.position = new BABYLON.Vector3(-75, 100, -5)
@@ -103,13 +129,11 @@
                 const wheelKeys = [{frame: 0, value: 0}, {frame: 30,value: -Math.PI/14}];
                 animWheel.setKeys(wheelKeys);
                 center.animations = [animWheel];
-                //scene.beginAnimation(center, 0, 30, true);
+                scene.beginAnimation(center, 0, 30, true);
             }
-
+            stands();
             ferris_wheel();
-            //supports();
-            // support.position = new BABYLON.Vector3(0, 70, 10);
-            // support.addRotation(0, 0, Math.PI/2);
+
             return scene;
         }
         /******* End of the create scene function ******/
