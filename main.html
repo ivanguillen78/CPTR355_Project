@@ -52,29 +52,39 @@
                 circle_material.emissiveColor = new BABYLON.Color3(1, 0, 0);
                 circle.material = circle_material;
                 var gl = new BABYLON.GlowLayer("glow", scene);
-                gl.intensity = 1;
+                gl.intensity = 0.5;
                 return circle;
             }
 
-            function support() {
+            function support1() {
+                support_points = [
+                    new BABYLON.Vector3(0, 50, 0),
+                    new BABYLON.Vector3(0, 0, 0),
+                    new BABYLON.Vector3(0, 0, -10),
+                    new BABYLON.Vector3(0, 50, -10)
+                ];
+                
+                var support = BABYLON.MeshBuilder.CreateTube("support", { path: support_points, radius: 0.3 }, scene);
+                support_material = new BABYLON.StandardMaterial("support_mat", scene);
+                support_material.emissiveColor = new BABYLON.Color3(1, 1, 1);
+                support.material = support_material;
+                return support;
+            }
+
+            function support2() {
                 support_points = [
                     new BABYLON.Vector3(0, 0, 0),
-                    new BABYLON.Vector3(0, 50, 0),
-                    new BABYLON.Vector3(0, 50, -10),
-                    new BABYLON.Vector3(0, 0, -10),
-                    new BABYLON.Vector3(0, 0, 0),
                     new BABYLON.Vector3(0, 12.5, -10),
-                    new BABYLON.Vector3(0, 25, 0),
-                    new BABYLON.Vector3(0, 37.5, -10),
-                    new BABYLON.Vector3(0, 50, 0),
-                    new BABYLON.Vector3(0, 37.5, 0),
-                    new BABYLON.Vector3(0, 37.5, -10),
+                    new BABYLON.Vector3(0, 12.5, 0),
                     new BABYLON.Vector3(0, 25, -10),
                     new BABYLON.Vector3(0, 25, 0),
-                    new BABYLON.Vector3(0, 12.5, 0),
-                    new BABYLON.Vector3(0, 12.5, -10)
+                    new BABYLON.Vector3(0, 37.5, -10),
+                    new BABYLON.Vector3(0, 37.5, 0),
+                    // new BABYLON.Vector3(0, 50, -10),
+                    // new BABYLON.Vector3(0, 50, 0),
                 ];
-                return BABYLON.MeshBuilder.CreateTube("support", { path: support_points, radius: 0.3 }, scene);
+                var support2 = BABYLON.MeshBuilder.CreateTube("support", { path: support_points, radius: 0.3 }, scene);
+                return support2;
             }
 
             function stand() {
@@ -98,7 +108,7 @@
                 b_stand2.position = new BABYLON.Vector3(-30, 46, -15);
                 b_stand2.addRotation(0, 0, -Math.PI/6);
                 
-                stand_center = BABYLON.MeshBuilder.CreateCylinder("stand_center", {height:42, diameter: 12}, scene);
+                stand_center = BABYLON.MeshBuilder.CreateCylinder("stand_center", {height:42, diameter: 9}, scene);
                 stand_center.position = new BABYLON.Vector3(0, 100, 2.5);
                 stand_center.addRotation(Math.PI/2, 0, 0);
             }
@@ -122,11 +132,16 @@
                 let counter = 0;
                 let angle = 0;
                 while (counter < 8) {
-                    support_beam = support();
-                    support_beam.position = new BABYLON.Vector3(0, 100, 10);
-                    support_beam.addRotation(0, 0, angle);
-                    support_beam.scaling = new BABYLON.Vector3(1.5, 1.5, 1.5);
-                    center.addChild(support_beam);
+                    support_beam1 = support1();
+                    support_beam1.position = new BABYLON.Vector3(0, 100, 10);
+                    support_beam1.addRotation(0, 0, angle);
+                    support_beam1.scaling = new BABYLON.Vector3(1.5, 1.5, 1.5);
+                    support_beam2 = support2();
+                    support_beam2.position = new BABYLON.Vector3(0, 100, 10);
+                    support_beam2.addRotation(0, 0, angle);
+                    support_beam2.scaling = new BABYLON.Vector3(1.5, 1.5, 1.5);
+                    center.addChild(support_beam1);
+                    center.addChild(support_beam2);
                     counter = counter + 1;
                     angle = angle + Math.PI / 4;
                 }
@@ -135,7 +150,7 @@
                 const wheelKeys = [{frame: 0, value: 0}, {frame: 30,value: -Math.PI/14}];
                 animWheel.setKeys(wheelKeys);
                 center.animations = [animWheel];
-                //scene.beginAnimation(center, 0, 30, true);
+                scene.beginAnimation(center, 0, 30, true);
             }
             stands();
             ferris_wheel();
