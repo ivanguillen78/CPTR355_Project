@@ -52,7 +52,7 @@
                 }
                 var circle = circle = BABYLON.MeshBuilder.CreateTube("lines", { path: circle_points, radius: 0.5 }, scene);
                 circle_material = new BABYLON.StandardMaterial("circle_mat", scene);
-                circle_material.emissiveColor = new BABYLON.Color3(1, 1, 2);
+                circle_material.emissiveColor = new BABYLON.Color3(0.138*3, 0.255*3, 0.251*3);
                 circle.material = circle_material;
                 var gl = new BABYLON.GlowLayer("glow", scene);
                 gl.intensity = 0.5;
@@ -123,13 +123,13 @@
                 particleSystem.emitter = mesh;
                 particleSystem.color1 = new BABYLON.Color3(0, 1, 1);
                 particleSystem.color2 = new BABYLON.Color3(0, 1, 1);
-                particleSystem.minSize = 3.5;
-                particleSystem.maxSize = 3.5;
+                particleSystem.minSize = 2.2;
+                particleSystem.maxSize = 2.2;
                 particleSystem.minLifeTime = 0.45;
                 particleSystem.maxLifeTime = 0.45;
-                particleSystem.emitRate = 6;
+                particleSystem.emitRate = 7;
                 particleSystem.direction1 = new BABYLON.Vector3(28, -4, 0);
-                particleSystem.direction2 = new BABYLON.Vector3(28, -4,0);
+                particleSystem.direction2 = new BABYLON.Vector3(28, -4, 0);
                 particleSystem.minEmitPower = 4;
                 particleSystem.maxEmitPower = 4;
                 particleSystem.updateSpeed = 0.009;
@@ -159,30 +159,44 @@
 
                 let counter = 0;
                 let angle = 0;
-                while (counter < 8) {
+                while (counter < 12) {
                     support_beam1 = support1();
+                    support_beam1.material = groundMat;
                     support_beam1.position = new BABYLON.Vector3(0, 100, 10);
                     support_beam1.addRotation(0, 0, angle);
                     support_beam1.scaling = new BABYLON.Vector3(1.5, 1.5, 1.5);
                     //light1 = lights(support_beam1);
                     support_beam2 = support2();
+                    support_beam2.material = groundMat;
                     support_beam2.position = new BABYLON.Vector3(0, 100, 10);
                     support_beam2.addRotation(0, 0, angle);
                     support_beam2.scaling = new BABYLON.Vector3(1.5, 1.5, 1.5);
                     light1a = lights(support_beam2);
-                    //light1b = lights(support_beam2);
+                    light1b = lights(support_beam2);
                     light1a.start();
-                    //light1b.start();
+                    light1b.start();
                     light2a = lights(support_beam2);
-                    //light2b = lights(support_beam2);
+                    light2b = lights(support_beam2);
+                    light2a.color1 = new BABYLON.Color3(0, 0, 1);
+                    light2a.color2 = new BABYLON.Color3(0, 0, 1);
+                    light2b.color1 = new BABYLON.Color3(0, 0, 1);
+                    light2b.color2 = new BABYLON.Color3(0, 0, 1);
                     light2a.start(200);
-                    light2a.color1 = new BABYLON.Color3(1, 0, 1);
-                    light2a.color2 = new BABYLON.Color3(1, 0, 1);
+                    light2b.start(200);
+
+                    light3a = lights(support_beam2);
+                    light3b = lights(support_beam2);
+                    light3a.color1 = new BABYLON.Color3(1, 1, 1);
+                    light3a.color2 = new BABYLON.Color3(1, 1, 1);
+                    light3b.color1 = new BABYLON.Color3(1, 1, 1);
+                    light3b.color2 = new BABYLON.Color3(1, 1, 1);
+                    light3a.start(300);
+                    light3b.start(300);
                     //light2b.start(50);
                     center.addChild(support_beam1);
                     center.addChild(support_beam2);
                     counter = counter + 1;
-                    angle = angle + Math.PI / 4;
+                    angle = angle + Math.PI / 6;
                 }
 
                 const animWheel = new BABYLON.Animation("wheelAnimation", "rotation.z", 30, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE);
