@@ -37,8 +37,9 @@
             camera.setPosition(new BABYLON.Vector3(-10, 280, 400));
             camera.attachControl(canvas, true);
 
-            //var light = new BABYLON.HemisphericLight("hemi", new BABYLON.Vector3(0, 1, 0), scene);
-
+            var light = new BABYLON.HemisphericLight("hemi", new BABYLON.Vector3(0, 1, 0), scene);
+            light.intensity = 0.3;
+            
             var ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 200, height: 200 }, scene);
             var groundMat = new BABYLON.StandardMaterial("groundMat", scene);
             groundMat.diffuseColor = new BABYLON.Color3.Black();
@@ -55,7 +56,7 @@
                 circle_material.emissiveColor = new BABYLON.Color3(0.138*3, 0.255*3, 0.251*3);
                 circle.material = circle_material;
                 var gl = new BABYLON.GlowLayer("glow", scene);
-                gl.intensity = 0.5;
+                gl.intensity = 0.2;
                 return circle;
             }
 
@@ -127,7 +128,7 @@
                 particleSystem.maxSize = 2.2;
                 particleSystem.minLifeTime = 0.45;
                 particleSystem.maxLifeTime = 0.45;
-                particleSystem.emitRate = 7;
+                particleSystem.emitRate = 5; //4
                 particleSystem.direction1 = new BABYLON.Vector3(28, -4, 0);
                 particleSystem.direction2 = new BABYLON.Vector3(28, -4, 0);
                 particleSystem.minEmitPower = 4;
@@ -160,6 +161,7 @@
                 let counter = 0;
                 let angle = 0;
                 while (counter < 12) {
+                    groundMat.diffuseColor = new BABYLON.Color3.White();
                     support_beam1 = support1();
                     support_beam1.material = groundMat;
                     support_beam1.position = new BABYLON.Vector3(0, 100, 10);
@@ -186,12 +188,12 @@
 
                     light3a = lights(support_beam2);
                     light3b = lights(support_beam2);
-                    light3a.color1 = new BABYLON.Color3(1, 1, 1);
-                    light3a.color2 = new BABYLON.Color3(1, 1, 1);
-                    light3b.color1 = new BABYLON.Color3(1, 1, 1);
-                    light3b.color2 = new BABYLON.Color3(1, 1, 1);
-                    light3a.start(300);
-                    light3b.start(300);
+                    light3a.color1 = new BABYLON.Color3(0.5, 1, 1);
+                    light3a.color2 = new BABYLON.Color3(0.5, 1, 1);
+                    light3b.color1 = new BABYLON.Color3(0.5, 1, 1);
+                    light3b.color2 = new BABYLON.Color3(0.5, 1, 1);
+                    light3a.start(400);
+                    light3b.start(400);
                     //light2b.start(50);
                     center.addChild(support_beam1);
                     center.addChild(support_beam2);
@@ -200,7 +202,7 @@
                 }
 
                 const animWheel = new BABYLON.Animation("wheelAnimation", "rotation.z", 30, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE);
-                const wheelKeys = [{ frame: 0, value: 0 }, { frame: 30, value: -Math.PI / 14 }];
+                const wheelKeys = [{ frame: 0, value: 0 }, { frame: 30, value: -Math.PI / 16.5 }];
                 animWheel.setKeys(wheelKeys);
                 center.animations = [animWheel];
                 scene.beginAnimation(center, 0, 30, true);
