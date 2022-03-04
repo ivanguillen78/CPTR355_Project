@@ -116,22 +116,23 @@
                 stand_center.addRotation(Math.PI / 2, 0, 0);
             }
 
-            function lights() {
+            function lights(mesh) {
                 var particleSystem = new BABYLON.ParticleSystem("particles", 2000, scene);
                 particleSystem.particleTexture = new BABYLON.Texture("https://www.babylonjs-playground.com/textures/Dot.png", scene);
-                particleSystem.emitter = new BABYLON.Vector3(0, 100, 11); // the starting position
+                //particleSystem.emitter = new BABYLON.Vector3(0, 100, 11);
+                particleSystem.emitter = mesh;
                 particleSystem.color1 = new BABYLON.Color3(1, 1, 1);
-                particleSystem.color2 = new BABYLON.Color3(1, 0, 1);
+                particleSystem.color2 = new BABYLON.Color3(0, 1, 1);
                 particleSystem.minSize = 3.5;
                 particleSystem.maxSize = 3.5;
-                particleSystem.minLifeTime = 1.4;
-                particleSystem.maxLifeTime = 1.4;
-                particleSystem.emitRate = 3;
-                particleSystem.direction1 = new BABYLON.Vector3(28, 0, 0);
-                particleSystem.direction2 = new BABYLON.Vector3(28,0,0);
-                particleSystem.minEmitPower = 2;
-                particleSystem.maxEmitPower = 2;
-                particleSystem.updateSpeed = 0.025;
+                particleSystem.minLifeTime = 0.45;
+                particleSystem.maxLifeTime = 0.45;
+                particleSystem.emitRate = 100;
+                particleSystem.direction1 = new BABYLON.Vector3(28, -4, 0);
+                particleSystem.direction2 = new BABYLON.Vector3(28, -4,0);
+                particleSystem.minEmitPower = 4;
+                particleSystem.maxEmitPower = 4;
+                particleSystem.updateSpeed = 0.009;
                 particleSystem.start();
                 particleSystem.minEmitBox.x = 0;
                 particleSystem.maxEmitBox.x = 0;
@@ -154,36 +155,6 @@
                 center.position = new BABYLON.Vector3(0, 100, 2.5);
                 center.addRotation(0, 0, 0);
 
-                light1 = lights();
-
-                light2 = lights();
-                light2.direction1 = new BABYLON.Vector3(0, 28, 0);
-                light2.direction2 = new BABYLON.Vector3(0, 28, 0);
-
-                light3 = lights();
-                light3.direction1 = new BABYLON.Vector3(0, -28, 0);
-                light3.direction2 = new BABYLON.Vector3(0, -28, 0);
-                
-                light4 = lights();
-                light4.direction1 = new BABYLON.Vector3(-28, 0, 0);
-                light4.direction2 = new BABYLON.Vector3(-28, 0, 0);
-
-                light5 = lights();
-                light5.direction1 = new BABYLON.Vector3(19.8, 19.8, 0);
-                light5.direction2 = new BABYLON.Vector3(19.8, 19.8, 0);
-
-                light6 = lights();
-                light6.direction1 = new BABYLON.Vector3(-19.8, 19.8, 0);
-                light6.direction2 = new BABYLON.Vector3(-19.8, 19.8, 0);
-
-                light7 = lights();
-                light7.direction1 = new BABYLON.Vector3(19.8, -19.8, 0);
-                light7.direction2 = new BABYLON.Vector3(19.8, -19.8, 0);
-
-                light8 = lights();
-                light8.direction1 = new BABYLON.Vector3(-19.8, -19.8, 0);
-                light8.direction2 = new BABYLON.Vector3(-19.8, -19.8, 0);
-
                 center.addChild(circle1);
                 center.addChild(circle2);
 
@@ -194,10 +165,12 @@
                     support_beam1.position = new BABYLON.Vector3(0, 100, 10);
                     support_beam1.addRotation(0, 0, angle);
                     support_beam1.scaling = new BABYLON.Vector3(1.5, 1.5, 1.5);
+                    //light1 = lights(support_beam1);
                     support_beam2 = support2();
                     support_beam2.position = new BABYLON.Vector3(0, 100, 10);
                     support_beam2.addRotation(0, 0, angle);
                     support_beam2.scaling = new BABYLON.Vector3(1.5, 1.5, 1.5);
+                    light1 = lights(support_beam2);
                     center.addChild(support_beam1);
                     center.addChild(support_beam2);
                     counter = counter + 1;
@@ -208,7 +181,7 @@
                 const wheelKeys = [{ frame: 0, value: 0 }, { frame: 30, value: -Math.PI / 14 }];
                 animWheel.setKeys(wheelKeys);
                 center.animations = [animWheel];
-                //scene.beginAnimation(center, 0, 30, true);
+                scene.beginAnimation(center, 0, 30, true);
             }
             stands();
             ferris_wheel();
