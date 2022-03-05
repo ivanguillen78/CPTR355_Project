@@ -128,7 +128,7 @@
                 particleSystem.maxSize = 2.2;
                 particleSystem.minLifeTime = 0.45;
                 particleSystem.maxLifeTime = 0.45;
-                particleSystem.emitRate = 8; //4
+                particleSystem.emitRate = 4; //4
                 particleSystem.direction1 = new BABYLON.Vector3(28, -4, 0);
                 particleSystem.direction2 = new BABYLON.Vector3(28, -4, 0);
                 particleSystem.minEmitPower = 4;
@@ -145,10 +145,13 @@
 
             function pattern1(mesh, offset) {
                 light = lights(mesh);
+                light.color2 = new BABYLON.Color3(0.76, 0.58, 1);
                 light.start(offset);
-                light.targetStopDuration = 0.5;
+                light.targetStopDuration = 2;
                 light.addEmitRateGradient(0, 20);
-                light.addEmitRateGradient(1, 50);
+                light.addEmitRateGradient(1, 100);
+                // light.addColorGradient(0, new BABYLON.Color3(0,1,1));
+                // light.addColorGradient(1, new BABYLON.Color3.White());
                 return light;
             }
 
@@ -164,7 +167,13 @@
                 one = pattern1(mesh, 0);
                 two = pattern1(mesh, 1500);
                 threeA = pattern2(mesh, 3000, new BABYLON.Color3(0,1,1));
-                threeB = pattern2(mesh, 3200, new BABYLON.Color3.Magenta());
+                threeA1 = pattern2(mesh, 3000, new BABYLON.Color3(0,1,1));
+                threeB = pattern2(mesh, 3200, new BABYLON.Color3.Blue());
+                threeB1 = pattern2(mesh, 3200, new BABYLON.Color3.Blue());
+                threeC = pattern2(mesh, 3400, new BABYLON.Color3(0.76, 0.58, 1));
+                threeC1 = pattern2(mesh, 3400, new BABYLON.Color3(0.76, 0.58, 1));
+                one = pattern1(mesh, 10000);
+                two = pattern1(mesh, 11000);
             }
 
             function ferris_wheel() {
