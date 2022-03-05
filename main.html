@@ -39,7 +39,7 @@
 
             var light = new BABYLON.HemisphericLight("hemi", new BABYLON.Vector3(0, 1, 0), scene);
             light.intensity = 0.3;
-            
+
             var ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 200, height: 200 }, scene);
             var groundMat = new BABYLON.StandardMaterial("groundMat", scene);
             groundMat.diffuseColor = new BABYLON.Color3.Black();
@@ -53,7 +53,7 @@
                 }
                 var circle = circle = BABYLON.MeshBuilder.CreateTube("lines", { path: circle_points, radius: 0.5 }, scene);
                 circle_material = new BABYLON.StandardMaterial("circle_mat", scene);
-                circle_material.emissiveColor = new BABYLON.Color3(0.138*3, 0.255*3, 0.251*3);
+                circle_material.emissiveColor = new BABYLON.Color3(0.138 * 3, 0.255 * 3, 0.251 * 3);
                 circle.material = circle_material;
                 var gl = new BABYLON.GlowLayer("glow", scene);
                 gl.intensity = 0.2;
@@ -128,7 +128,7 @@
                 particleSystem.maxSize = 2.2;
                 particleSystem.minLifeTime = 0.45;
                 particleSystem.maxLifeTime = 0.45;
-                particleSystem.emitRate = 5; //4
+                particleSystem.emitRate = 4; //4
                 particleSystem.direction1 = new BABYLON.Vector3(28, -4, 0);
                 particleSystem.direction2 = new BABYLON.Vector3(28, -4, 0);
                 particleSystem.minEmitPower = 4;
@@ -139,6 +139,7 @@
                 particleSystem.minEmitBox.y = 0;
                 particleSystem.maxEmitBox.y = 0;
                 particleSystem.maxEmitBox.z = 0;
+                particleSystem.minEmitBox.z = 0;
                 return particleSystem;
             }
 
@@ -158,6 +159,27 @@
                 center.addChild(circle1);
                 center.addChild(circle2);
 
+                var animationBox = new BABYLON.Animation("tutoAnimation", "material.emissiveColor", 30, BABYLON.Animation.ANIMATIONTYPE_COLOR3,
+                    BABYLON.Animation.ANIMATIONLOOPMODE_LOOP);
+                var keys = [];
+                keys.push({
+                    frame: 0,
+                    value: new BABYLON.Color3.Blue()
+                });
+                keys.push({
+                    frame: 100,
+                    value: new BABYLON.Color3(0, 1, 1)
+                });
+                keys.push({
+                    frame: 200,
+                    value: new BABYLON.Color3.Blue()
+                });
+                animationBox.setKeys(keys);
+                circle1.animations.push(animationBox);
+                circle2.animations.push(animationBox);
+                scene.beginAnimation(circle1, 0, 200, true, 2);
+                scene.beginAnimation(circle2, 0, 200, true, 2);
+
                 let counter = 0;
                 let angle = 0;
                 while (counter < 12) {
@@ -176,25 +198,17 @@
                     light1a = lights(support_beam2);
                     light1b = lights(support_beam2);
                     light1a.start();
-                    light1b.start();
-                    light2a = lights(support_beam2);
-                    light2b = lights(support_beam2);
-                    light2a.color1 = new BABYLON.Color3(0, 0, 1);
-                    light2a.color2 = new BABYLON.Color3(0, 0, 1);
-                    light2b.color1 = new BABYLON.Color3(0, 0, 1);
-                    light2b.color2 = new BABYLON.Color3(0, 0, 1);
-                    light2a.start(200);
-                    light2b.start(200);
+                    light1a.targetStopDuration = 0.5;
+                    light1a.addEmitRateGradient(0, 20);
+                    light1a.addEmitRateGradient(1, 50);
 
-                    light3a = lights(support_beam2);
-                    light3b = lights(support_beam2);
-                    light3a.color1 = new BABYLON.Color3(0.5, 1, 1);
-                    light3a.color2 = new BABYLON.Color3(0.5, 1, 1);
-                    light3b.color1 = new BABYLON.Color3(0.5, 1, 1);
-                    light3b.color2 = new BABYLON.Color3(0.5, 1, 1);
-                    light3a.start(400);
-                    light3b.start(400);
-                    //light2b.start(50);
+                    light1b.color1 = new BABYLON.Color3(1, 0, 1);
+                    light1b.color2 = new BABYLON.Color3(1, 0, 1);
+                    light1b.start(1000);
+                    light1b.targetStopDuration = 0.5;
+                    light1b.addEmitRateGradient(0, 20);
+                    light1b.addEmitRateGradient(1, 50);
+
                     center.addChild(support_beam1);
                     center.addChild(support_beam2);
                     counter = counter + 1;
