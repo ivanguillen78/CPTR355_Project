@@ -120,7 +120,7 @@
             function lights(mesh) {
                 var particleSystem = new BABYLON.ParticleSystem("particles", 2000, scene);
                 particleSystem.particleTexture = new BABYLON.Texture("https://www.babylonjs-playground.com/textures/Dot.png", scene);
-                //particleSystem.emitter = new BABYLON.Vector3(0, 100, 11);
+                particleSystem.emitter = new BABYLON.Vector3(0, 100, 11);
                 particleSystem.emitter = mesh;
                 particleSystem.color1 = new BABYLON.Color3(0, 1, 1);
                 particleSystem.color2 = new BABYLON.Color3(0, 1, 1);
@@ -128,7 +128,7 @@
                 particleSystem.maxSize = 2.2;
                 particleSystem.minLifeTime = 0.45;
                 particleSystem.maxLifeTime = 0.45;
-                particleSystem.emitRate = 4; //4
+                particleSystem.emitRate = 8; //4
                 particleSystem.direction1 = new BABYLON.Vector3(28, -4, 0);
                 particleSystem.direction2 = new BABYLON.Vector3(28, -4, 0);
                 particleSystem.minEmitPower = 4;
@@ -141,6 +141,30 @@
                 particleSystem.maxEmitBox.z = 0;
                 particleSystem.minEmitBox.z = 0;
                 return particleSystem;
+            }
+
+            function pattern1(mesh, offset) {
+                light = lights(mesh);
+                light.start(offset);
+                light.targetStopDuration = 0.5;
+                light.addEmitRateGradient(0, 20);
+                light.addEmitRateGradient(1, 50);
+                return light;
+            }
+
+            function pattern2(mesh, offset, color) {
+                light = lights(mesh);
+                light.color1 = color;
+                light.color2 = color;
+                light.start(offset);
+                return light;
+            }
+
+            function lightSequence(mesh) {
+                one = pattern1(mesh, 0);
+                two = pattern1(mesh, 1500);
+                threeA = pattern2(mesh, 3000, new BABYLON.Color3(0,1,1));
+                threeB = pattern2(mesh, 3200, new BABYLON.Color3.Magenta());
             }
 
             function ferris_wheel() {
@@ -189,25 +213,13 @@
                     support_beam1.position = new BABYLON.Vector3(0, 100, 10);
                     support_beam1.addRotation(0, 0, angle);
                     support_beam1.scaling = new BABYLON.Vector3(1.5, 1.5, 1.5);
-                    //light1 = lights(support_beam1);
                     support_beam2 = support2();
                     support_beam2.material = groundMat;
                     support_beam2.position = new BABYLON.Vector3(0, 100, 10);
                     support_beam2.addRotation(0, 0, angle);
                     support_beam2.scaling = new BABYLON.Vector3(1.5, 1.5, 1.5);
-                    light1a = lights(support_beam2);
-                    light1b = lights(support_beam2);
-                    light1a.start();
-                    light1a.targetStopDuration = 0.5;
-                    light1a.addEmitRateGradient(0, 20);
-                    light1a.addEmitRateGradient(1, 50);
 
-                    light1b.color1 = new BABYLON.Color3(1, 0, 1);
-                    light1b.color2 = new BABYLON.Color3(1, 0, 1);
-                    light1b.start(1000);
-                    light1b.targetStopDuration = 0.5;
-                    light1b.addEmitRateGradient(0, 20);
-                    light1b.addEmitRateGradient(1, 50);
+                    lightSequence(support_beam2);
 
                     center.addChild(support_beam1);
                     center.addChild(support_beam2);
