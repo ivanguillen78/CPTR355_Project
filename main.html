@@ -38,7 +38,7 @@
             camera.attachControl(canvas, true);
 
             var light = new BABYLON.HemisphericLight("hemi", new BABYLON.Vector3(0, 1, 0), scene);
-            light.intensity = 0.3;
+            light.intensity = 0.1;
 
             var ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 200, height: 200 }, scene);
             var groundMat = new BABYLON.StandardMaterial("groundMat", scene);
@@ -56,7 +56,7 @@
                 circle_material.emissiveColor = new BABYLON.Color3(0.138 * 3, 0.255 * 3, 0.251 * 3);
                 circle.material = circle_material;
                 var gl = new BABYLON.GlowLayer("glow", scene);
-                gl.intensity = 0.2;
+                gl.intensity = 0.4;
                 return circle;
             }
 
@@ -207,11 +207,19 @@
                     frame: 200,
                     value: new BABYLON.Color3.Blue()
                 });
+                keys.push({
+                    frame: 300,
+                    value: new BABYLON.Color3(0.76, 0.58, 1)
+                });
+                keys.push({
+                    frame: 400,
+                    value: new BABYLON.Color3.Blue()
+                });
                 animationBox.setKeys(keys);
                 circle1.animations.push(animationBox);
                 circle2.animations.push(animationBox);
-                scene.beginAnimation(circle1, 0, 200, true, 2);
-                scene.beginAnimation(circle2, 0, 200, true, 2);
+                scene.beginAnimation(circle1, 0, 400, true, 2);
+                scene.beginAnimation(circle2, 0, 400, true, 2);
 
                 let counter = 0;
                 let angle = 0;
