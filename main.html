@@ -121,13 +121,13 @@
 
             function lights(mesh) {
                 var particleSystem = new BABYLON.ParticleSystem("particles", 2000, scene);
-                particleSystem.particleTexture = new BABYLON.Texture("https://www.babylonjs-playground.com/textures/Dot.png", scene);
+                particleSystem.particleTexture = new BABYLON.Texture("https://www.babylonjs-playground.com/textures/fire.jpg", scene);
                 particleSystem.emitter = new BABYLON.Vector3(0, 100, 11);
                 particleSystem.emitter = mesh;
                 particleSystem.color1 = new BABYLON.Color3(0, 1, 1);
                 particleSystem.color2 = new BABYLON.Color3(0, 1, 1);
-                particleSystem.minSize = 2.2;
-                particleSystem.maxSize = 2.2;
+                particleSystem.minSize = 4.2;
+                particleSystem.maxSize = 4.2;
                 particleSystem.minLifeTime = 0.45;
                 particleSystem.maxLifeTime = 0.45;
                 //particleSystem.emitRate = 2.9; //4
@@ -145,20 +145,21 @@
                 return particleSystem;
             }
 
-            function pattern1(mesh_list, offset) {
+            function disappearing_beam(mesh_list, offset, color) {
                 for (let mesh in mesh_list) {
                     light = lights(mesh_list[mesh]);
-                    light.color2 = new BABYLON.Color3(0.76, 0.58, 1);
+                    light.color1 = color;
+                    light.color2 = color;
                     light.start(offset);
-                    light.targetStopDuration = 2;
-                    light.addEmitRateGradient(0, 20);
-                    light.addEmitRateGradient(1, 100);
+                    light.targetStopDuration = 0.3;
+                    light.addEmitRateGradient(0, 500);
+                    light.addEmitRateGradient(1, 1000);
                 }
                 // light.addColorGradient(0, new BABYLON.Color3(0,1,1));
                 // light.addColorGradient(1, new BABYLON.Color3.White());
             }
 
-            function pattern2(mesh_list, offset, color, emitRate) {
+            function simple_emit(mesh_list, offset, color, emitRate) {
                 for (let mesh in mesh_list) {
                     light = lights(mesh_list[mesh]);
                     light.color1 = color;
@@ -252,12 +253,17 @@
                 // TODO: Create light show sequence
                 // TODO: Create more patterns to facilitate sequence creation.
 
-                // one = pattern1(quarter1, 0)
+                //one = pattern1(every_other1, 0);
                 // two = pattern1(quarter3, 1000);
                 // three = pattern1(quarter2, 2000);
                 // four = pattern1(quarter4, 3000)
-                //threeA = pattern2(every_other1, 0, new BABYLON.Color3(0,1,1), 7);
-                //threeA1 = pattern2(mesh_list, 0, new BABYLON.Color3(0,0,1), 2.9);
+                threeA1 = disappearing_beam(every_other1, 0, new BABYLON.Color3.Blue());
+                threeA2 = disappearing_beam(every_other2, 100, new BABYLON.Color3(0,1,1));
+                four = simple_emit(all, 300, new BABYLON.Color3.Magenta(), 5);
+
+                // threeA2 = pattern2(every_other1, 100, new BABYLON.Color3(0,1,1), 7);
+                // threeB1 = pattern2(every_other2, 200, new BABYLON.Color3(0,0,1), 7);
+                // threeB2 = pattern2(every_other2, 250, new BABYLON.Color3(0,0,1), 7);
                 //threeB = pattern2(every_other2, 200, new BABYLON.Color3.Blue(), 7);
                 // threeB1 = pattern2(mesh, 3200, new BABYLON.Color3.Blue(), 7);
                 // threeC = pattern2(mesh, 3400, new BABYLON.Color3(0.76, 0.58, 1, 10));
@@ -301,8 +307,8 @@
                 circle_lights.setKeys(keys);
                 circle1.animations.push(circle_lights);
                 circle2.animations.push(circle_lights);
-                //scene.beginAnimation(circle1, 0, 400, true, 10);
-                //scene.beginAnimation(circle2, 0, 400, true, 10);
+                scene.beginAnimation(circle1, 0, 400, true, 5);
+                scene.beginAnimation(circle2, 0, 400, true, 5);
 
                 var center = BABYLON.MeshBuilder.CreateCylinder("center", { height: 0, diameter: 0 }, scene);
                 center.position = new BABYLON.Vector3(0, 100, 2.5);
