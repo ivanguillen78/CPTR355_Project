@@ -350,3 +350,36 @@
 
             return scene;
         }
+        /******* End of the create scene function ******/
+
+        function init() {
+            canvas = document.getElementById("renderCanvas");
+            engine = new BABYLON.Engine(
+                canvas,
+                true,
+                { preserveDrawingBuffer: true, stencil: true, disableWebGL2Support: false }
+            );
+
+            let scene = createScene();
+
+            // Register a render loop to repeatedly render the scene
+            engine.runRenderLoop(function () {
+                scene.render();
+            });
+
+            // Watch for browser/canvas resize events
+            window.addEventListener("resize", function () {
+                engine.resize();
+            });
+
+        }
+
+    </script>
+
+</head>
+
+<body onload="init()">
+    <canvas id="renderCanvas"></canvas>
+</body>
+
+</html>
