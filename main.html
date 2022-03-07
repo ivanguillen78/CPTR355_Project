@@ -37,16 +37,12 @@
             camera.setPosition(new BABYLON.Vector3(-10, 280, 400));
             camera.attachControl(canvas, true);
 
-            var music = new BABYLON.Sound("music", "audio/song.wav", scene, soundReady, { loop: true });
-
-            function soundReady() {
-                music.play();
-            }
-
             var light = new BABYLON.HemisphericLight("hemi", new BABYLON.Vector3(0, 1, 0), scene);
             light.intensity = 0.1;
 
-            var ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 200, height: 200 }, scene);
+            var music = new BABYLON.Sound("synth", "song.wav", scene, null, { loop: true, autoplay: true });
+
+            var ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 1000, height: 1000 }, scene);
             var groundMat = new BABYLON.StandardMaterial("groundMat", scene);
             groundMat.diffuseColor = new BABYLON.Color3.Black();
             ground.material = groundMat;
@@ -62,7 +58,7 @@
                 circle_material.emissiveColor = new BABYLON.Color3(0.138 * 3, 0.255 * 3, 0.251 * 3);
                 circle.material = circle_material;
                 var gl = new BABYLON.GlowLayer("glow", scene);
-                gl.intensity = 0.4;
+                gl.intensity = 0.35;
                 return circle;
             }
 
@@ -126,8 +122,6 @@
             function lights(mesh) {
                 var particleSystem = new BABYLON.ParticleSystem("particles", 2000, scene);
                 particleSystem.particleTexture = new BABYLON.Texture("https://www.babylonjs-playground.com/textures/Dot.png", scene);
-                //good particles to use: Spark.png, particle.png, ?FlashParticle.png, fire.jpg, Dot.png (current)
-                // (cont.)
                 particleSystem.emitter = new BABYLON.Vector3(0, 100, 11);
                 particleSystem.emitter = mesh;
                 particleSystem.color1 = new BABYLON.Color3(0, 1, 1);
@@ -136,7 +130,7 @@
                 particleSystem.maxSize = 2.2;
                 particleSystem.minLifeTime = 0.45;
                 particleSystem.maxLifeTime = 0.45;
-                particleSystem.emitRate = 4; //4
+                //particleSystem.emitRate = 2.9; //4
                 particleSystem.direction1 = new BABYLON.Vector3(28, -4, 0);
                 particleSystem.direction2 = new BABYLON.Vector3(28, -4, 0);
                 particleSystem.minEmitPower = 4;
@@ -151,37 +145,125 @@
                 return particleSystem;
             }
 
-            function pattern1(mesh, offset) {
-                light = lights(mesh);
-                light.color2 = new BABYLON.Color3(0.76, 0.58, 1);
-                light.start(offset);
-                light.targetStopDuration = 2;
-                light.addEmitRateGradient(0, 20);
-                light.addEmitRateGradient(1, 100);
+            function pattern1(mesh_list, offset) {
+                for (let mesh in mesh_list) {
+                    light = lights(mesh_list[mesh]);
+                    light.color2 = new BABYLON.Color3(0.76, 0.58, 1);
+                    light.start(offset);
+                    light.targetStopDuration = 2;
+                    light.addEmitRateGradient(0, 20);
+                    light.addEmitRateGradient(1, 100);
+                }
                 // light.addColorGradient(0, new BABYLON.Color3(0,1,1));
                 // light.addColorGradient(1, new BABYLON.Color3.White());
-                return light;
             }
 
-            function pattern2(mesh, offset, color) {
-                light = lights(mesh);
-                light.color1 = color;
-                light.color2 = color;
-                light.start(offset);
-                return light;
+            function pattern2(mesh_list, offset, color, emitRate) {
+                for (let mesh in mesh_list) {
+                    light = lights(mesh_list[mesh]);
+                    light.color1 = color;
+                    light.color2 = color;
+                    light.emitRate = emitRate;
+                    light.start(offset);
+                }
             }
 
-            function lightSequence(mesh) {
-                one = pattern1(mesh, 0);
-                two = pattern1(mesh, 1500);
-                threeA = pattern2(mesh, 3000, new BABYLON.Color3(0, 1, 1));
-                threeA1 = pattern2(mesh, 3000, new BABYLON.Color3(0, 1, 1));
-                threeB = pattern2(mesh, 3200, new BABYLON.Color3.Blue());
-                threeB1 = pattern2(mesh, 3200, new BABYLON.Color3.Blue());
-                threeC = pattern2(mesh, 3400, new BABYLON.Color3(0.76, 0.58, 1));
-                threeC1 = pattern2(mesh, 3400, new BABYLON.Color3(0.76, 0.58, 1));
-                one = pattern1(mesh, 10000);
-                two = pattern1(mesh, 11000);
+            function lightSequence(mesh_list) {
+                var all = mesh_list;
+                var every_other1 = [
+                    mesh_list[0],
+                    mesh_list[2],
+                    mesh_list[4],
+                    mesh_list[6],
+                    mesh_list[8],
+                    mesh_list[10]
+                ]
+                var every_other2 = [
+                    mesh_list[1],
+                    mesh_list[3],
+                    mesh_list[5],
+                    mesh_list[7],
+                    mesh_list[9],
+                    mesh_list[11]
+                ]
+                var quarter1 = [
+                    mesh_list[0],
+                    mesh_list[1],
+                    mesh_list[2]
+                ]
+                var quarter2 = [
+                    mesh_list[3],
+                    mesh_list[4],
+                    mesh_list[5]
+                ]
+                var quarter3 = [
+                    mesh_list[6],
+                    mesh_list[7],
+                    mesh_list[8]
+                ]
+                var quarter4 = [
+                    mesh_list[9],
+                    mesh_list[10],
+                    mesh_list[11]
+                ]
+                var cross1 = [
+                    mesh_list[0],
+                    mesh_list[3],
+                    mesh_list[6],
+                    mesh_list[9],
+                ]
+                var cross2 = [
+                    mesh_list[1],
+                    mesh_list[4],
+                    mesh_list[7],
+                    mesh_list[10],
+                ]
+                var cross3 = [
+                    mesh_list[2],
+                    mesh_list[5],
+                    mesh_list[8],
+                    mesh_list[11],
+                ]
+                var opposite1 = [
+                    mesh_list[0],
+                    mesh_list[6]
+                ]
+                var opposite1 = [
+                    mesh_list[1],
+                    mesh_list[7]
+                ]
+                var opposite1 = [
+                    mesh_list[2],
+                    mesh_list[8]
+                ]
+                var opposite1 = [
+                    mesh_list[3],
+                    mesh_list[9]
+                ]
+                var opposite1 = [
+                    mesh_list[4],
+                    mesh_list[10]
+                ]
+                var opposite1 = [
+                    mesh_list[5],
+                    mesh_list[11]
+                ]
+    
+                // TODO: Create light show sequence
+                // TODO: Create more patterns to facilitate sequence creation.
+
+                // one = pattern1(quarter1, 0)
+                // two = pattern1(quarter3, 1000);
+                // three = pattern1(quarter2, 2000);
+                // four = pattern1(quarter4, 3000)
+                //threeA = pattern2(every_other1, 0, new BABYLON.Color3(0,1,1), 7);
+                //threeA1 = pattern2(mesh_list, 0, new BABYLON.Color3(0,0,1), 2.9);
+                //threeB = pattern2(every_other2, 200, new BABYLON.Color3.Blue(), 7);
+                // threeB1 = pattern2(mesh, 3200, new BABYLON.Color3.Blue(), 7);
+                // threeC = pattern2(mesh, 3400, new BABYLON.Color3(0.76, 0.58, 1, 10));
+                // threeC1 = pattern2(mesh, 3400, new BABYLON.Color3(0.76, 0.58, 1, 10));
+                // one = pattern1(mesh, 10000);
+                // two = pattern1(mesh, 11000);
             }
 
             function ferris_wheel() {
@@ -193,14 +275,7 @@
                 circle2.position = new BABYLON.Vector3(-75, 100, 10);
                 circle2.scaling = new BABYLON.Vector3(1.5, 1.5, 1.5);
 
-                var center = BABYLON.MeshBuilder.CreateCylinder("center", { height: 0, diameter: 0 }, scene);
-                center.position = new BABYLON.Vector3(0, 100, 2.5);
-                center.addRotation(0, 0, 0);
-
-                center.addChild(circle1);
-                center.addChild(circle2);
-
-                var animationBox = new BABYLON.Animation("tutoAnimation", "material.emissiveColor", 30, BABYLON.Animation.ANIMATIONTYPE_COLOR3,
+                var circle_lights = new BABYLON.Animation("circle_lights", "material.emissiveColor", 30, BABYLON.Animation.ANIMATIONTYPE_COLOR3,
                     BABYLON.Animation.ANIMATIONLOOPMODE_LOOP);
                 var keys = [];
                 keys.push({
@@ -215,36 +290,47 @@
                     frame: 200,
                     value: new BABYLON.Color3.Blue()
                 });
-                // keys.push({
-                //     frame: 300,
-                //     value: new BABYLON.Color3(0.76, 0.58, 1)
-                // });
-                // keys.push({
-                //     frame: 400,
-                //     value: new BABYLON.Color3.Blue()
-                // });
-                animationBox.setKeys(keys);
-                circle1.animations.push(animationBox);
-                circle2.animations.push(animationBox);
-                scene.beginAnimation(circle1, 0, 200, true, 9.5);
-                scene.beginAnimation(circle2, 0, 200, true, 9.5);
+                keys.push({
+                    frame: 300,
+                    value: new BABYLON.Color3(0.76, 0.58, 1)
+                });
+                keys.push({
+                    frame: 400,
+                    value: new BABYLON.Color3.Blue()
+                });
+                circle_lights.setKeys(keys);
+                circle1.animations.push(circle_lights);
+                circle2.animations.push(circle_lights);
+                //scene.beginAnimation(circle1, 0, 400, true, 10);
+                //scene.beginAnimation(circle2, 0, 400, true, 10);
+
+                var center = BABYLON.MeshBuilder.CreateCylinder("center", { height: 0, diameter: 0 }, scene);
+                center.position = new BABYLON.Vector3(0, 100, 2.5);
+                center.addRotation(0, 0, 0);
+
+                center.addChild(circle1);
+                center.addChild(circle2);
 
                 let counter = 0;
                 let angle = 0;
+                var support_beam_list = []
+
                 while (counter < 12) {
-                    groundMat.diffuseColor = new BABYLON.Color3.White();
                     support_beam1 = support1();
                     support_beam1.material = groundMat;
                     support_beam1.position = new BABYLON.Vector3(0, 100, 10);
                     support_beam1.addRotation(0, 0, angle);
                     support_beam1.scaling = new BABYLON.Vector3(1.5, 1.5, 1.5);
+
                     support_beam2 = support2();
                     support_beam2.material = groundMat;
                     support_beam2.position = new BABYLON.Vector3(0, 100, 10);
                     support_beam2.addRotation(0, 0, angle);
                     support_beam2.scaling = new BABYLON.Vector3(1.5, 1.5, 1.5);
 
-                    lightSequence(support_beam2);
+                    support_beam_list.push(support_beam2);
+
+                    lightSequence(support_beam_list);
 
                     center.addChild(support_beam1);
                     center.addChild(support_beam2);
@@ -258,41 +344,9 @@
                 center.animations = [animWheel];
                 scene.beginAnimation(center, 0, 30, true);
             }
+
             stands();
             ferris_wheel();
 
             return scene;
         }
-        /******* End of the create scene function ******/
-
-        function init() {
-            canvas = document.getElementById("renderCanvas");
-            engine = new BABYLON.Engine(
-                canvas,
-                true,
-                { preserveDrawingBuffer: true, stencil: true, disableWebGL2Support: false }
-            );
-
-            let scene = createScene();
-
-            // Register a render loop to repeatedly render the scene
-            engine.runRenderLoop(function () {
-                scene.render();
-            });
-
-            // Watch for browser/canvas resize events
-            window.addEventListener("resize", function () {
-                engine.resize();
-            });
-
-        }
-
-    </script>
-
-</head>
-
-<body onload="init()">
-    <canvas id="renderCanvas"></canvas>
-</body>
-
-</html>
