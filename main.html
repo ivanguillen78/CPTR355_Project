@@ -37,6 +37,12 @@
             camera.setPosition(new BABYLON.Vector3(-10, 280, 400));
             camera.attachControl(canvas, true);
 
+            var music = new BABYLON.Sound("music", "audio/song.wav", scene, soundReady, { loop: true });
+
+            function soundReady() {
+                music.play();
+            }
+
             var light = new BABYLON.HemisphericLight("hemi", new BABYLON.Vector3(0, 1, 0), scene);
             light.intensity = 0.1;
 
@@ -120,6 +126,8 @@
             function lights(mesh) {
                 var particleSystem = new BABYLON.ParticleSystem("particles", 2000, scene);
                 particleSystem.particleTexture = new BABYLON.Texture("https://www.babylonjs-playground.com/textures/Dot.png", scene);
+                //good particles to use: Spark.png, particle.png, ?FlashParticle.png, fire.jpg, Dot.png (current)
+                // (cont.)
                 particleSystem.emitter = new BABYLON.Vector3(0, 100, 11);
                 particleSystem.emitter = mesh;
                 particleSystem.color1 = new BABYLON.Color3(0, 1, 1);
@@ -166,8 +174,8 @@
             function lightSequence(mesh) {
                 one = pattern1(mesh, 0);
                 two = pattern1(mesh, 1500);
-                threeA = pattern2(mesh, 3000, new BABYLON.Color3(0,1,1));
-                threeA1 = pattern2(mesh, 3000, new BABYLON.Color3(0,1,1));
+                threeA = pattern2(mesh, 3000, new BABYLON.Color3(0, 1, 1));
+                threeA1 = pattern2(mesh, 3000, new BABYLON.Color3(0, 1, 1));
                 threeB = pattern2(mesh, 3200, new BABYLON.Color3.Blue());
                 threeB1 = pattern2(mesh, 3200, new BABYLON.Color3.Blue());
                 threeC = pattern2(mesh, 3400, new BABYLON.Color3(0.76, 0.58, 1));
@@ -207,19 +215,19 @@
                     frame: 200,
                     value: new BABYLON.Color3.Blue()
                 });
-                keys.push({
-                    frame: 300,
-                    value: new BABYLON.Color3(0.76, 0.58, 1)
-                });
-                keys.push({
-                    frame: 400,
-                    value: new BABYLON.Color3.Blue()
-                });
+                // keys.push({
+                //     frame: 300,
+                //     value: new BABYLON.Color3(0.76, 0.58, 1)
+                // });
+                // keys.push({
+                //     frame: 400,
+                //     value: new BABYLON.Color3.Blue()
+                // });
                 animationBox.setKeys(keys);
                 circle1.animations.push(animationBox);
                 circle2.animations.push(animationBox);
-                scene.beginAnimation(circle1, 0, 400, true, 2);
-                scene.beginAnimation(circle2, 0, 400, true, 2);
+                scene.beginAnimation(circle1, 0, 200, true, 9.5);
+                scene.beginAnimation(circle2, 0, 200, true, 9.5);
 
                 let counter = 0;
                 let angle = 0;
