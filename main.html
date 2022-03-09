@@ -145,18 +145,18 @@
                 return particleSystem;
             }
 
-            function disappearing_beam(mesh_list, offset, color) {
-                for (let mesh in mesh_list) {
+            function disappearing_beam(mesh_list, offset, color, size) {
+                for (var mesh in mesh_list) {
                     light = lights(mesh_list[mesh]);
                     light.color1 = color;
                     light.color2 = color;
+                    light.minSize = size;
+                    light.maxSize = size;
                     light.start(offset);
-                    light.targetStopDuration = 0.3;
-                    light.addEmitRateGradient(0, 500);
+                    light.targetStopDuration = 0.5;
+                    light.addEmitRateGradient(0, 700);
                     light.addEmitRateGradient(1, 1000);
                 }
-                // light.addColorGradient(0, new BABYLON.Color3(0,1,1));
-                // light.addColorGradient(1, new BABYLON.Color3.White());
             }
 
             function simple_emit(mesh_list, offset, color, emitRate) {
@@ -252,24 +252,16 @@
     
                 // TODO: Create light show sequence
                 // TODO: Create more patterns to facilitate sequence creation.
-
-                //one = pattern1(every_other1, 0);
-                // two = pattern1(quarter3, 1000);
-                // three = pattern1(quarter2, 2000);
-                // four = pattern1(quarter4, 3000)
-                threeA1 = disappearing_beam(every_other1, 0, new BABYLON.Color3.Blue());
-                threeA2 = disappearing_beam(every_other2, 100, new BABYLON.Color3(0,1,1));
-                four = simple_emit(all, 300, new BABYLON.Color3.Magenta(), 5);
-
-                // threeA2 = pattern2(every_other1, 100, new BABYLON.Color3(0,1,1), 7);
-                // threeB1 = pattern2(every_other2, 200, new BABYLON.Color3(0,0,1), 7);
-                // threeB2 = pattern2(every_other2, 250, new BABYLON.Color3(0,0,1), 7);
-                //threeB = pattern2(every_other2, 200, new BABYLON.Color3.Blue(), 7);
-                // threeB1 = pattern2(mesh, 3200, new BABYLON.Color3.Blue(), 7);
-                // threeC = pattern2(mesh, 3400, new BABYLON.Color3(0.76, 0.58, 1, 10));
-                // threeC1 = pattern2(mesh, 3400, new BABYLON.Color3(0.76, 0.58, 1, 10));
-                // one = pattern1(mesh, 10000);
-                // two = pattern1(mesh, 11000);
+                // simple_emit(every_other1, 0, new BABYLON.Color3.White(), 6)
+                // simple_emit(every_other2, 100, new BABYLON.Color3(0,1,1), 6)
+                // disappearing_beam(cross1, 5000, new BABYLON.Color3.White())
+                // disappearing_beam(cross2, 6000, new BABYLON.Color3.Blue())
+                // disappearing_beam(cross3, 7000, new BABYLON.Color3(0,1,1))
+                
+                disappearing_beam(all, 0, new BABYLON.Color3.White(), 2.2);
+                disappearing_beam(all, 1500, new BABYLON.Color3.White(), 2.2);
+                simple_emit(all, 3000, new BABYLON.Color3(0,1,1), 6);
+                simple_emit(all, 3200, new BABYLON.Color3.Magenta(), 6)
             }
 
             function ferris_wheel() {
@@ -307,8 +299,8 @@
                 circle_lights.setKeys(keys);
                 circle1.animations.push(circle_lights);
                 circle2.animations.push(circle_lights);
-                scene.beginAnimation(circle1, 0, 400, true, 5);
-                scene.beginAnimation(circle2, 0, 400, true, 5);
+                scene.beginAnimation(circle1, 0, 400, true, 10);
+                scene.beginAnimation(circle2, 0, 400, true, 10);
 
                 var center = BABYLON.MeshBuilder.CreateCylinder("center", { height: 0, diameter: 0 }, scene);
                 center.position = new BABYLON.Vector3(0, 100, 2.5);
