@@ -66,7 +66,8 @@
                 }
                 var circle = circle = BABYLON.MeshBuilder.CreateTube("lines", { path: circle_points, radius: 0.5 }, scene);
                 circle_material = new BABYLON.StandardMaterial("circle_mat", scene);
-                circle_material.emissiveColor = new BABYLON.Color3(0.138 * 3, 0.255 * 3, 0.251 * 3);
+                //circle_material.emissiveColor = new BABYLON.Color3(0.138 * 3, 0.255 * 3, 0.251 * 3);
+                circle_material.emissiveColor = new BABYLON.Color3(0,1,1)
                 circle.material = circle_material;
                 var gl = new BABYLON.GlowLayer("glow", scene);
                 gl.intensity = 0.35;
@@ -156,7 +157,7 @@
                 return particleSystem;
             }
 
-            function disappearing_beam(mesh_list, offset, color, size) {
+            function disappearing_beam(mesh_list, offset, color, size, length) {
                 for (var mesh in mesh_list) {
                     light = lights(mesh_list[mesh]);
                     light.color1 = color;
@@ -164,9 +165,9 @@
                     light.minSize = size;
                     light.maxSize = size;
                     light.start(offset);
-                    light.targetStopDuration = 1;
-                    light.addEmitRateGradient(0, 300);
-                    light.addEmitRateGradient(1, 400);
+                    light.targetStopDuration = length;
+                    light.addEmitRateGradient(0, 500);
+                    light.addEmitRateGradient(1, 500);
                 }
             }
 
@@ -180,15 +181,15 @@
                     light.addEmitRateGradient(0, 100);
                     light.addEmitRateGradient(1, 100);
                 }
-                // for (let mesh in mesh_list) {
-                //     light = lights(mesh_list[mesh]);
-                //     light.color1 = color;
-                //     light.color2 = color;
-                //     light.start(offset);
-                //     light.targetStopDuration = 0.04;
-                //     light.addEmitRateGradient(0, 100);
-                //     light.addEmitRateGradient(1, 100);
-                // }
+                for (let mesh in mesh_list) {
+                    light = lights(mesh_list[mesh]);
+                    light.color1 = color;
+                    light.color2 = color;
+                    light.start(offset);
+                    light.targetStopDuration = 0.04;
+                    light.addEmitRateGradient(0, 100);
+                    light.addEmitRateGradient(1, 100);
+                }
                 
             }
 
@@ -273,29 +274,21 @@
                     mesh_list[11]
                 ]
                 
-                var circle_lights = new BABYLON.Animation("circle_lights", "material.emissiveColor", 30, BABYLON.Animation.ANIMATIONTYPE_COLOR3,
+                var circle_lights = new BABYLON.Animation("circle_lights", "material.emissiveColor", 60, BABYLON.Animation.ANIMATIONTYPE_COLOR3,
                     BABYLON.Animation.ANIMATIONLOOPMODE_LOOP);
                 var keys = [];
-                keys.push({
-                    frame: 0,
-                    value: new BABYLON.Color3.Blue()
-                });
-                keys.push({
-                    frame: 100,
-                    value: new BABYLON.Color3(0, 1, 1)
-                });
-                keys.push({
-                    frame: 200,
-                    value: new BABYLON.Color3.Blue()
-                });
-                keys.push({
-                    frame: 300,
-                    value: new BABYLON.Color3(0.76, 0.58, 1)
-                });
-                keys.push({
-                    frame: 400,
-                    value: new BABYLON.Color3.Blue()
-                });
+                // keys.push({
+                //     frame: 0,
+                //     value: new BABYLON.Color3(0, 1, 1)
+                // });
+                // keys.push({
+                //     frame: 317,
+                //     value: new BABYLON.Color3.White()
+                // });
+                // keys.push({
+                //     frame: 634,
+                //     value: new BABYLON.Color3(0, 1, 1)
+                // });
 
                 circle_lights.setKeys(keys);
                 mesh1.animations.push(circle_lights);
@@ -307,21 +300,69 @@
                             switch (kbInfo.event.key) {
                                 case " ":
                                     let counter1 = 0;
-                                    let x = 0;
                                     music.play();
-                                    //scene.beginAnimation(circle1, 0, 400, false, 10);
-                                    //scene.beginAnimation(circle2, 0, 400, false, 10);
+                                    //scene.beginAnimation(circle1, 0, 634, true);
+                                    //scene.beginAnimation(circle2, 0, 634, true);
+                                    let a = 0;
+                                    //simple_emit(quarter1, 0, new BABYLON.Color3(0,1,1));
+                                    for (let i = 0; i < 4; i += 1) {
+                                        simple_emit(quarter1, a, new BABYLON.Color3(0,1,1));
+                                        simple_emit(quarter2, 330 + a, BABYLON.Color3.White());
+                                        simple_emit(quarter3, 660 + a, BABYLON.Color3.White());
+                                        simple_emit(quarter4, 990 + a, BABYLON.Color3.White());
+                                        a += 1320;
+                                    }
+                                    let b = 0;
+                                    for (let j = 0; j < 4; j += 1) {
+                                        simple_emit(quarter1, 5280 + b, BABYLON.Color3.Magenta());
+                                        simple_emit(quarter2, 5610 + b, BABYLON.Color3.White());
+                                        simple_emit(quarter3, 5940 + b, BABYLON.Color3.White());
+                                        simple_emit(quarter4, 6270 + b, BABYLON.Color3.White());
+                                        b += 1320;
+                                    }
+                                    let c = 0;
+                                    for (let k = 0; k < 4; k += 1) {
+                                        simple_emit(quarter1, 10560 + c, new BABYLON.Color3(0,1,1));
+                                        simple_emit(quarter2, 10890 + c, BABYLON.Color3.White());
+                                        simple_emit(quarter3, 11220 + c, BABYLON.Color3.White());
+                                        simple_emit(quarter4, 11550 + c, BABYLON.Color3.White());
+                                        c += 1320;
+                                    }
+                                    let d = 0;
+                                    for (let i = 0; i < 4; i += 1) {
+                                        simple_emit(quarter1, 15840 + d, BABYLON.Color3.Magenta());
+                                        simple_emit(quarter2, 16170 + d, BABYLON.Color3.White());
+                                        simple_emit(quarter3, 16500 + d, BABYLON.Color3.White());
+                                        simple_emit(quarter4, 16830 + d, BABYLON.Color3.White());
+                                        d += 1320;
+                                    }
+                                    disappearing_beam(every_other1, 21120, BABYLON.Color3.White(), 5, 2.64/4);
+                                    let e = 0
                                     for (let i = 0; i < 16; i += 1) {
-                                        simple_emit(quarter1, 330 + x, new BABYLON.Color3(0,1,1));
-                                        simple_emit(quarter2, 660 + x, new BABYLON.Color3(0,1,1));
-                                        simple_emit(quarter3, 990 + x, new BABYLON.Color3(0,1,1));
-                                        simple_emit(quarter4, 1320 + x, new BABYLON.Color3(0,1,1));
-                                        //simple_emit(quarter1, 1650 + x, BABYLON.Color3.Blue(), 6);
-                                        x += 1320;
+                                        simple_emit(every_other2, 21120 + e, BABYLON.Color3.White());
+                                        e += 330;
+                                    }
+                                    disappearing_beam(every_other2, 26400, BABYLON.Color3.White(), 5, 2.64);
+                                    let f = 0
+                                    for (let i = 0; i < 16; i += 1) {
+                                        simple_emit(every_other1, 26400 + f, BABYLON.Color3.White());
+                                        f += 330;
+                                    }
+                                    disappearing_beam(every_other1, 31680, BABYLON.Color3.White(), 5, 2.64);
+                                    let g = 0
+                                    for (let i = 0; i < 16; i += 1) {
+                                        simple_emit(every_other2, 31680 + g, BABYLON.Color3.White());
+                                        g += 330;
+                                    }
+                                    disappearing_beam(every_other2, 36960, BABYLON.Color3.White(), 5, 2.64);
+                                    let h = 0
+                                    for (let i = 0; i < 16; i += 1) {
+                                        simple_emit(every_other1, 36960 + h, BABYLON.Color3.White());
+                                        h += 330;
                                     }
                                     
-                                    //simple_emit(all, 400, new BABYLON.Color3(0.138 * 3, 0.255 * 3, 0.251 * 3), 6);
-                                    //disappearing_beam(all, 1500, new BABYLON.Color3.White(), 2.2);
+                                    // simple_emit(all, 400, new BABYLON.Color3(0.138 * 3, 0.255 * 3, 0.251 * 3), 6);
+                                    // disappearing_beam(all, 1500, new BABYLON.Color3.White(), 2.2);
                                     break
                             }
                             break;
