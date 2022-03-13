@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Final Project - Ferris Wheel</title>
+
+    <style>
+        html,
+        body {
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #renderCanvas {
+            width: 100%;
+            height: 100%;
+            touch-action: none;
+        }
+    </style>
+
+    <script src="https://preview.babylonjs.com/babylon.js"></script>
+    <script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+    <script src="grid.js"></script>
+
+    <script>
+        var canvas = null;
+        var engine = null;
+
+        /******* Add the create scene function ******/
+        var createScene = function () {
+            var scene = new BABYLON.Scene(engine);
+
+            var camera = new BABYLON.FreeCamera("Camera", new BABYLON.Vector3(0, 50, -400), scene);
+            camera.attachControl(canvas, true);
+            //camera.addRotation(0, Math.PI, 0);
+
+            var light = new BABYLON.HemisphericLight("hemi", new BABYLON.Vector3(0, 1, 0), scene);
+            light.intensity = 0.1;
+
+            var music = new BABYLON.Sound("synth", "song.mp3", scene);
+
+            var skybox = BABYLON.MeshBuilder.CreateBox("skyBox", {size:2000.0}, scene);
+            var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
+            skyboxMaterial.backFaceCulling = false;
+            skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("https://doc.babylonjs.com/_next/image?url=%2Fimg%2Fresources%2Ftextures_thumbs%2FskyboxBlack.jpg&w=1080&q=75", scene);
+            skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+            skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
+            skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+            skybox.material = skyboxMaterial;
+
+            var ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 1000, height: 1000 }, scene);
+            ground.material = new BABYLON.GridMaterial("groundMat", scene);
+            ground.material.mainColor = BABYLON.Color3.Black();
+            ground.material.gridRatio = 20;
+            ground.material.lineColor = new BABYLON.Color3(0.138 * 3, 0.255 * 3, 0.251 * 3);
+
+            function tube_circle() {
+                circle_points = [];
+                for (let i = 0; i <= 360; i++) {
+                    let angle = i * (2 * Math.PI / 360);
+                    circle_points.push(new BABYLON.Vector3((1 + Math.cos(angle)) * 50, (Math.sin(angle)) * 50, 0));
+                }
+                var circle = circle = BABYLON.MeshBuilder.CreateTube("lines", { path: circle_points, radius: 0.5 }, scene);
+                circle_material = new BABYLON.StandardMaterial("circle_mat", scene);
+                circle_material.emissiveColor = new BABYLON.Color3(0.138 * 3, 0.255 * 3, 0.251 * 3);
+                circle.material = circle_material;
+                var gl = new BABYLON.GlowLayer("glow", scene);
+                gl.intensity = 0.35;
+                return circle;
+            }
+
+            function support1() {
+                support_points = [
+                    new BABYLON.Vector3(0, 50, 0),
+                    new BABYLON.Vector3(0, 0, 0),
+                    new BABYLON.Vector3(0, 0, -10),
+                    new BABYLON.Vector3(0, 50, -10)
+                ];
+
+                var support = BABYLON.MeshBuilder.CreateTube("support", { path: support_points, radius: 0.3 }, scene);
+                // support_material = new BABYLON.StandardMaterial("support_mat", scene);
+                // support_material.emissiveColor = new BABYLON.Color3(1, 1, 1);
+                // support.material = support_material;
+                return support;
+            }
+
+            function support2() {
+                support_points = [
+                    new BABYLON.Vector3(0, 0, 0),
+                    new BABYLON.Vector3(0, 12.5, -10),
+                    new BABYLON.Vector3(0, 12.5, 0),
+                    new BABYLON.Vector3(0, 25, -10),
+                    new BABYLON.Vector3(0, 25, 0),
+                    new BABYLON.Vector3(0, 37.5, -10),
+                    new BABYLON.Vector3(0, 37.5, 0),
+                    // new BABYLON.Vector3(0, 50, -10),
+                    // new BABYLON.Vector3(0, 50, 0),
+                ];
+                var support2 = BABYLON.MeshBuilder.CreateTube("support", { path: support_points, radius: 0.3 }, scene);
+                return support2;
+            }
+
+            function stand() {
+                var stand = BABYLON.MeshBuilder.CreateBox("stand", { height: 120, width: 7, depth: 7 }, scene)
+                return stand;
+            }
+
+            function stands() {
+                f_stand1 = stand();
+                f_stand2 = stand();
+                b_stand1 = stand();
+                b_stand2 = stand();
+
+                f_stand1.position = new BABYLON.Vector3(30, 46, 20);
+                f_stand1.addRotation(0, 0, Math.PI / 6);
+                f_stand2.position = new BABYLON.Vector3(-30, 46, 20);
+                f_stand2.addRotation(0, 0, -Math.PI / 6);
+
+                b_stand1.position = new BABYLON.Vector3(30, 46, -15);
+                b_stand1.addRotation(0, 0, Math.PI / 6);
+                b_stand2.position = new BABYLON.Vector3(-30, 46, -15);
+                b_stand2.addRotation(0, 0, -Math.PI / 6);
+
+                stand_center = BABYLON.MeshBuilder.CreateCylinder("stand_center", { height: 42, diameter: 9 }, scene);
+                stand_center.position = new BABYLON.Vector3(0, 100, 2.5);
+                stand_center.addRotation(Math.PI / 2, 0, 0);
+            }
+
+            function lights(mesh) {
+                var particleSystem = new BABYLON.ParticleSystem("particles", 2000, scene);
+                particleSystem.particleTexture = new BABYLON.Texture("https://www.babylonjs-playground.com/textures/fire.jpg", scene);
+                particleSystem.emitter = new BABYLON.Vector3(0, 100, 11);
+                particleSystem.emitter = mesh;
+                particleSystem.color1 = new BABYLON.Color3(0, 1, 1);
+                particleSystem.color2 = new BABYLON.Color3(0, 1, 1);
+                particleSystem.minSize = 10;
+                particleSystem.maxSize = 10;
+                particleSystem.minLifeTime = 0.45;
+                particleSystem.maxLifeTime = 0.45;
+                //particleSystem.emitRate = 2.9; //4
+                particleSystem.direction1 = new BABYLON.Vector3(28, -4, 0);
+                particleSystem.direction2 = new BABYLON.Vector3(28, -4, 0);
+                particleSystem.minEmitPower = 4;
+                particleSystem.maxEmitPower = 4;
+                particleSystem.updateSpeed = 0.009;
+                particleSystem.minEmitBox.x = 0;
+                particleSystem.maxEmitBox.x = 0;
+                particleSystem.minEmitBox.y = 0;
+                particleSystem.maxEmitBox.y = 0;
+                particleSystem.maxEmitBox.z = 0;
+                particleSystem.minEmitBox.z = 0;
+                return particleSystem;
+            }
+
+            function disappearing_beam(mesh_list, offset, color, size) {
+                for (var mesh in mesh_list) {
+                    light = lights(mesh_list[mesh]);
+                    light.color1 = color;
+                    light.color2 = color;
+                    light.minSize = size;
+                    light.maxSize = size;
+                    light.start(offset);
+                    light.targetStopDuration = 1;
+                    light.addEmitRateGradient(0, 300);
+                    light.addEmitRateGradient(1, 400);
+                }
+            }
+
+            function simple_emit(mesh_list, offset, color) {
+                for (let mesh in mesh_list) {
+                    light = lights(mesh_list[mesh]);
+                    light.color1 = color;
+                    light.color2 = color;
+                    light.start(offset);
+                    light.targetStopDuration = 0.04;
+                    light.addEmitRateGradient(0, 100);
+                    light.addEmitRateGradient(1, 100);
+                }
+                // for (let mesh in mesh_list) {
+                //     light = lights(mesh_list[mesh]);
+                //     light.color1 = color;
+                //     light.color2 = color;
+                //     light.start(offset);
+                //     light.targetStopDuration = 0.04;
+                //     light.addEmitRateGradient(0, 100);
+                //     light.addEmitRateGradient(1, 100);
+                // }
+                
+            }
+
+            function lightSequence(mesh_list, mesh1, mesh2) {
+                var all = mesh_list;
+                var every_other1 = [
+                    mesh_list[0],
+                    mesh_list[2],
+                    mesh_list[4],
+                    mesh_list[6],
+                    mesh_list[8],
+                    mesh_list[10]
+                ]
+                var every_other2 = [
+                    mesh_list[1],
+                    mesh_list[3],
+                    mesh_list[5],
+                    mesh_list[7],
+                    mesh_list[9],
+                    mesh_list[11]
+                ]
+                var quarter1 = [
+                    mesh_list[0],
+                    mesh_list[4],
+                    mesh_list[8]
+                ]
+                var quarter2 = [
+                    mesh_list[1],
+                    mesh_list[5],
+                    mesh_list[9]
+                ]
+                var quarter3 = [
+                    mesh_list[2],
+                    mesh_list[6],
+                    mesh_list[10]
+                ]
+                var quarter4 = [
+                    mesh_list[3],
+                    mesh_list[7],
+                    mesh_list[11]
+                ]
+                var cross1 = [
+                    mesh_list[0],
+                    mesh_list[3],
+                    mesh_list[6],
+                    mesh_list[9],
+                ]
+                var cross2 = [
+                    mesh_list[1],
+                    mesh_list[4],
+                    mesh_list[7],
+                    mesh_list[10],
+                ]
+                var cross3 = [
+                    mesh_list[2],
+                    mesh_list[5],
+                    mesh_list[8],
+                    mesh_list[11],
+                ]
+                var opposite1 = [
+                    mesh_list[0],
+                    mesh_list[6]
+                ]
+                var opposite2 = [
+                    mesh_list[1],
+                    mesh_list[7]
+                ]
+                var opposite3 = [
+                    mesh_list[2],
+                    mesh_list[8]
+                ]
+                var opposite4 = [
+                    mesh_list[3],
+                    mesh_list[9]
+                ]
+                var opposite5 = [
+                    mesh_list[4],
+                    mesh_list[10]
+                ]
+                var opposite6 = [
+                    mesh_list[5],
+                    mesh_list[11]
+                ]
+                
+                var circle_lights = new BABYLON.Animation("circle_lights", "material.emissiveColor", 30, BABYLON.Animation.ANIMATIONTYPE_COLOR3,
+                    BABYLON.Animation.ANIMATIONLOOPMODE_LOOP);
+                var keys = [];
+                keys.push({
+                    frame: 0,
+                    value: new BABYLON.Color3.Blue()
+                });
+                keys.push({
+                    frame: 100,
+                    value: new BABYLON.Color3(0, 1, 1)
+                });
+                keys.push({
+                    frame: 200,
+                    value: new BABYLON.Color3.Blue()
+                });
+                keys.push({
+                    frame: 300,
+                    value: new BABYLON.Color3(0.76, 0.58, 1)
+                });
+                keys.push({
+                    frame: 400,
+                    value: new BABYLON.Color3.Blue()
+                });
+
+                circle_lights.setKeys(keys);
+                mesh1.animations.push(circle_lights);
+                mesh2.animations.push(circle_lights);
+
+                scene.onKeyboardObservable.add((kbInfo) => {
+                    switch (kbInfo.type) {
+                        case BABYLON.KeyboardEventTypes.KEYDOWN:
+                            switch (kbInfo.event.key) {
+                                case " ":
+                                    let counter1 = 0;
+                                    let x = 0;
+                                    music.play();
+                                    //scene.beginAnimation(circle1, 0, 400, false, 10);
+                                    //scene.beginAnimation(circle2, 0, 400, false, 10);
+                                    for (let i = 0; i < 16; i += 1) {
+                                        simple_emit(quarter1, 330 + x, new BABYLON.Color3(0,1,1));
+                                        simple_emit(quarter2, 660 + x, new BABYLON.Color3(0,1,1));
+                                        simple_emit(quarter3, 990 + x, new BABYLON.Color3(0,1,1));
+                                        simple_emit(quarter4, 1320 + x, new BABYLON.Color3(0,1,1));
+                                        //simple_emit(quarter1, 1650 + x, BABYLON.Color3.Blue(), 6);
+                                        x += 1320;
+                                    }
+                                    
+                                    //simple_emit(all, 400, new BABYLON.Color3(0.138 * 3, 0.255 * 3, 0.251 * 3), 6);
+                                    //disappearing_beam(all, 1500, new BABYLON.Color3.White(), 2.2);
+                                    break
+                            }
+                            break;
+                    }
+                });
+                // simple_emit(all, 0, new BABYLON.Color3(0, 1, 1), 6);
+                // simple_emit(all, 200, new BABYLON.Color3.Magenta(), 6)
+            }
+
+            function ferris_wheel() {
+                circle1 = tube_circle();
+                circle1.position = new BABYLON.Vector3(-75, 100, -5)
+                circle1.scaling = new BABYLON.Vector3(1.5, 1.5, 1.5);
+
+                circle2 = tube_circle();
+                circle2.position = new BABYLON.Vector3(-75, 100, 10);
+                circle2.scaling = new BABYLON.Vector3(1.5, 1.5, 1.5);
+
+                var center = BABYLON.MeshBuilder.CreateCylinder("center", { height: 0, diameter: 0 }, scene);
+                center.position = new BABYLON.Vector3(0, 100, 2.5);
+                center.addRotation(0, 0, 0);
+
+                center.addChild(circle1);
+                center.addChild(circle2);
+
+                let counter = 0;
+                let angle = 0;
+                var support_beam_list = []
+
+                while (counter < 12) {
+                    support_beam1 = support1();
+                    //support_beam1.material = groundMat;
+                    support_beam1.position = new BABYLON.Vector3(0, 100, 10);
+                    support_beam1.addRotation(0, 0, angle);
+                    support_beam1.scaling = new BABYLON.Vector3(1.5, 1.5, 1.5);
+
+                    support_beam2 = support2();
+                    //support_beam2.material = groundMat;
+                    support_beam2.position = new BABYLON.Vector3(0, 100, 10);
+                    support_beam2.addRotation(0, 0, angle);
+                    support_beam2.scaling = new BABYLON.Vector3(1.5, 1.5, 1.5);
+
+                    support_beam_list.push(support_beam2);
+
+                    center.addChild(support_beam1);
+                    center.addChild(support_beam2);
+
+                    counter = counter + 1;
+                    angle = angle + Math.PI / 6;
+                }
+                center.addRotation(0, Math.PI, 0);
+
+                lightSequence(support_beam_list, circle1, circle2);
+
+                const animWheel = new BABYLON.Animation("wheelAnimation", "rotation.z", 30, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE);
+                const wheelKeys = [{ frame: 0, value: 0 }, { frame: 30, value: -Math.PI / 16.5 }];
+                animWheel.setKeys(wheelKeys);
+                center.animations = [animWheel];
+                scene.beginAnimation(center, 0, 30, true);
+            }
+
+            stands();
+            ferris_wheel();
+
+            return scene;
+        }
+        /******* End of the create scene function ******/
+
+        function init() {
+            canvas = document.getElementById("renderCanvas");
+            engine = new BABYLON.Engine(
+                canvas,
+                true,
+                { preserveDrawingBuffer: true, stencil: true, disableWebGL2Support: false }
+            );
+
+            let scene = createScene();
+
+            // Register a render loop to repeatedly render the scene
+            engine.runRenderLoop(function () {
+                scene.render();
+            });
+
+            // Watch for browser/canvas resize events
+            window.addEventListener("resize", function () {
+                engine.resize();
+            });
+
+        }
+
+    </script>
+
+</head>
+
+<body onload="init()">
+    <canvas id="renderCanvas"></canvas>
+</body>
+
+</html>
