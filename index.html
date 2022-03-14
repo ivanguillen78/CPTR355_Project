@@ -48,15 +48,15 @@
             skyboxMaterial.backFaceCulling = false;
             skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("https://doc.babylonjs.com/_next/image?url=%2Fimg%2Fresources%2Ftextures_thumbs%2FskyboxBlack.jpg&w=1080&q=75", scene);
             skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
-            skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
-            skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+            //skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
+            //skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
             skybox.material = skyboxMaterial;
 
             var ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 1000, height: 1000 }, scene);
             ground.material = new BABYLON.GridMaterial("groundMat", scene);
-            ground.material.mainColor = BABYLON.Color3.Black();
+            //ground.material.mainColor = BABYLON.Color3.Magenta();
+            ground.material.lineColor = new BABYLON.Color3.White();
             ground.material.gridRatio = 20;
-            ground.material.lineColor = new BABYLON.Color3(0.138 * 3, 0.255 * 3, 0.251 * 3);
 
             function tube_circle() {
                 circle_points = [];
@@ -67,7 +67,7 @@
                 var circle = circle = BABYLON.MeshBuilder.CreateTube("lines", { path: circle_points, radius: 0.5 }, scene);
                 circle_material = new BABYLON.StandardMaterial("circle_mat", scene);
                 //circle_material.emissiveColor = new BABYLON.Color3(0.138 * 3, 0.255 * 3, 0.251 * 3);
-                circle_material.emissiveColor = new BABYLON.Color3(0,1,1)
+                circle_material.emissiveColor = new BABYLON.Color3.White();
                 circle.material = circle_material;
                 var gl = new BABYLON.GlowLayer("glow", scene);
                 gl.intensity = 0.35;
@@ -336,28 +336,28 @@
                                         simple_emit(quarter4, 16830 + d, BABYLON.Color3.White());
                                         d += 1320;
                                     }
-                                    disappearing_beam(every_other1, 21120, BABYLON.Color3.White(), 5, 2.64/4);
+                                    disappearing_beam(every_other1, 21120, new BABYLON.Color3(0.54, 0.96, 0.98), 5, 2.64);
                                     let e = 0
                                     for (let i = 0; i < 16; i += 1) {
-                                        simple_emit(every_other2, 21120 + e, BABYLON.Color3.White());
+                                        simple_emit(every_other2, 21120 + e, new BABYLON.Color3(0, 1, 0.87));
                                         e += 330;
                                     }
-                                    disappearing_beam(every_other2, 26400, BABYLON.Color3.White(), 5, 2.64);
+                                    disappearing_beam(every_other2, 26400, new BABYLON.Color3(0, 1, 0.87), 5, 2.64);
                                     let f = 0
                                     for (let i = 0; i < 16; i += 1) {
-                                        simple_emit(every_other1, 26400 + f, BABYLON.Color3.White());
+                                        simple_emit(every_other1, 26400 + f, new BABYLON.Color3(0.54, 0.96, 0.98));
                                         f += 330;
                                     }
-                                    disappearing_beam(every_other1, 31680, BABYLON.Color3.White(), 5, 2.64);
+                                    disappearing_beam(every_other1, 31680, new BABYLON.Color3(0.54, 0.96, 0.98), 5, 2.64);
                                     let g = 0
                                     for (let i = 0; i < 16; i += 1) {
-                                        simple_emit(every_other2, 31680 + g, BABYLON.Color3.White());
+                                        simple_emit(every_other2, 31680 + g, new BABYLON.Color3(0, 1, 0.87));
                                         g += 330;
                                     }
-                                    disappearing_beam(every_other2, 36960, BABYLON.Color3.White(), 5, 2.64);
+                                    disappearing_beam(every_other2, 36960, new BABYLON.Color3(0, 1, 0.87), 5, 2.64);
                                     let h = 0
                                     for (let i = 0; i < 16; i += 1) {
-                                        simple_emit(every_other1, 36960 + h, BABYLON.Color3.White());
+                                        simple_emit(every_other1, 36960 + h, new BABYLON.Color3(0.54, 0.96, 0.98));
                                         h += 330;
                                     }
                                     
