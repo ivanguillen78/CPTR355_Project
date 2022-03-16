@@ -34,31 +34,63 @@
         var createScene = function () {
             var scene = new BABYLON.Scene(engine);
 
-            var camera = new BABYLON.FreeCamera("Camera", new BABYLON.Vector3(0, 50, -400), scene);
+            var camera = new BABYLON.FreeCamera("Camera", new BABYLON.Vector3(0, 60, -450), scene);
             camera.attachControl(canvas, true);
-            //camera.addRotation(0, Math.PI, 0);
+            camera.ellipsoid = new BABYLON.Vector3(1,1,1)
+            scene.collisionsEnabled = true;
+            camera.checkCollisions = true;
 
             var light = new BABYLON.HemisphericLight("hemi", new BABYLON.Vector3(0, 1, 0), scene);
             light.intensity = 0.1;
 
             var music = new BABYLON.Sound("synth", "song.mp3", scene);
 
-            var skybox = BABYLON.MeshBuilder.CreateBox("skyBox", { size: 2000.0 }, scene);
+            var skybox = BABYLON.MeshBuilder.CreateBox("skyBox", { size: 1400.0 }, scene);
             var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
             skyboxMaterial.backFaceCulling = false;
-            skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("https://doc.babylonjs.com/_next/image?url=%2Fimg%2Fresources%2Ftextures_thumbs%2FskyboxBlack.jpg&w=1080&q=75", scene);
+            skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("textures/skybox2", scene);
             skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+            skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
+            skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+            skyboxMaterial.disableLighting = true;
             skybox.material = skyboxMaterial;
+            //skybox.checkCollisions = true;
 
-            var ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 1000, height: 1000 }, scene);
-            ground.material = new BABYLON.GridMaterial("groundMat", scene);
-            //ground.material.mainColor = BABYLON.Color3.Magenta();
-            ground.material.lineColor = new BABYLON.Color3.White();
-            ground.material.gridRatio = 20;
+            //var ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 1000, height: 1000 }, scene);
+            var ground = BABYLON.MeshBuilder.CreateGroundFromHeightMap("gdhm", "textures/heightmap3.png", { width: 1000, height: 1000, subdivisions: 5, maxHeight: 200});
+            var ground_material = new BABYLON.StandardMaterial("ground_material", scene);
+            ground_material.diffuseTexture = new BABYLON.Texture("https://images.unsplash.com/photo-1617713965103-9fda56c89fad?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8Y29uY3JldGUlMjB0ZXh0dXJlfGVufDB8fDB8fA%3D%3D&w=1000&q=80", scene);
+            ground.material = ground_material;
+            ground.checkCollisions = true;
+
             var gl = new BABYLON.GlowLayer("glow", scene);
             gl.intensity = 0.3;
 
-            cyan = new BABYLON.Color3(0,1,1);
+            cyan = new BABYLON.Color3(0, 1, 1);
+
+            function streetLight() {
+                const spriteManagerLights = new BABYLON.SpriteManager("lightsManager", "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/9c364db4-89f5-4792-a0fe-0883ffd642b8/dcq2yit-e4fb9047-22d2-4981-bc47-92ba686695c5.png/v1/fill/w_270,h_514,strp/sprite_streetlight_by_mariamagic59_dcq2yit-fullview.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NTE0IiwicGF0aCI6IlwvZlwvOWMzNjRkYjQtODlmNS00NzkyLWEwZmUtMDg4M2ZmZDY0MmI4XC9kY3EyeWl0LWU0ZmI5MDQ3LTIyZDItNDk4MS1iYzQ3LTkyYmE2ODY2OTVjNS5wbmciLCJ3aWR0aCI6Ijw9MjcwIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.Fj7UyYnvYanzPoGeaGZiLV6oJXEOLnI-9m735gFmf3w", 2000, { width: 512, height: 1024 });
+                const streetlight = new BABYLON.Sprite("tree", spriteManagerLights);
+                streetlight.width = 70;
+                streetlight.height = 140;
+                return streetlight;
+            }
+
+            function streetLights() {
+                light1 = streetLight();
+                light1.position = new BABYLON.Vector3(-40, 0, -280);
+                light2 = streetLight();
+                light2.position = new BABYLON.Vector3(-45, 0, -215);
+                light3 = streetLight();
+                light3.position = new BABYLON.Vector3(-45, 0, -150);
+                light4 = streetLight();
+                light4.position = new BABYLON.Vector3(70, 0, -280);
+                light5 = streetLight();
+                light5.position = new BABYLON.Vector3(75, 0, -215);
+                light6 = streetLight();
+                light6.position = new BABYLON.Vector3(80, 0, -150);
+            }
+
 
             function tube_circle(size) {
                 circle_points = [];
@@ -131,18 +163,18 @@
                 b_stand1 = stand();
                 b_stand2 = stand();
 
-                f_stand1.position = new BABYLON.Vector3(30, 46, 20);
+                f_stand1.position = new BABYLON.Vector3(30, 111, 50);
                 f_stand1.addRotation(0, 0, Math.PI / 6);
-                f_stand2.position = new BABYLON.Vector3(-30, 46, 20);
+                f_stand2.position = new BABYLON.Vector3(-30, 111, 50);
                 f_stand2.addRotation(0, 0, -Math.PI / 6);
 
-                b_stand1.position = new BABYLON.Vector3(30, 46, -15);
+                b_stand1.position = new BABYLON.Vector3(30, 111, 15);
                 b_stand1.addRotation(0, 0, Math.PI / 6);
-                b_stand2.position = new BABYLON.Vector3(-30, 46, -15);
+                b_stand2.position = new BABYLON.Vector3(-30, 111, 15);
                 b_stand2.addRotation(0, 0, -Math.PI / 6);
 
                 stand_center = BABYLON.MeshBuilder.CreateCylinder("stand_center", { height: 42, diameter: 9 }, scene);
-                stand_center.position = new BABYLON.Vector3(0, 100, 2.5);
+                stand_center.position = new BABYLON.Vector3(0, 160, 32.5);
                 stand_center.addRotation(Math.PI / 2, 0, 0);
             }
 
@@ -174,7 +206,7 @@
                 return particleSystem;
             }
 
-            function disappearing_beam(mesh_list, offset, color, size, length) {
+            function disappearing_beam(mesh_list, offset, color1, color2, size, length) {
                 for (var mesh in mesh_list) {
                     light = lights(mesh_list[mesh]);
                     // light.color1 = color;
@@ -185,8 +217,8 @@
                     light.targetStopDuration = length;
                     light.addEmitRateGradient(0, 50);
                     light.addEmitRateGradient(1, 50);
-                    light.addColorGradient(0, new BABYLON.Color3(0,1,1));
-                    light.addColorGradient(1, BABYLON.Color3.Magenta());
+                    light.addColorGradient(0, color1);
+                    light.addColorGradient(1, color2);
                 }
             }
 
@@ -199,8 +231,8 @@
                     light.targetStopDuration = 0.04;
                     light.addEmitRateGradient(0, 100);
                     light.addEmitRateGradient(1, 100);
-                    light.addColorGradient(0, BABYLON.Color3.Green());
-                    light.addColorGradient(1, BABYLON.Color3.Magenta());
+                    // light.addColorGradient(0, BABYLON.Color3.Green());
+                    // light.addColorGradient(1, BABYLON.Color3.Magenta());
                 }
                 for (let mesh in mesh_list) {
                     light = lights(mesh_list[mesh]);
@@ -210,8 +242,8 @@
                     light.targetStopDuration = 0.04;
                     light.addEmitRateGradient(0, 100);
                     light.addEmitRateGradient(1, 100);
-                    light.addColorGradient(0, BABYLON.Color3.Green());
-                    light.addColorGradient(1, BABYLON.Color3.Magenta());
+                    // light.addColorGradient(0, BABYLON.Color3.Green());
+                    // light.addColorGradient(1, BABYLON.Color3.Magenta());
                 }
 
             }
@@ -300,18 +332,18 @@
                 var circle_lights = new BABYLON.Animation("circle_lights", "material.emissiveColor", 60, BABYLON.Animation.ANIMATIONTYPE_COLOR3,
                     BABYLON.Animation.ANIMATIONLOOPMODE_LOOP);
                 var keys = [];
-                // keys.push({
-                //     frame: 0,
-                //     value: new BABYLON.Color3(0, 1, 1)
-                // });
-                // keys.push({
-                //     frame: 317,
-                //     value: new BABYLON.Color3.Magenta()
-                // });
-                // keys.push({
-                //     frame: 634,
-                //     value: new BABYLON.Color3(0, 1, 1)
-                // });
+                keys.push({
+                    frame: 0,
+                    value: new BABYLON.Color3(0, 1, 1)
+                });
+                keys.push({
+                    frame: 317,
+                    value: new BABYLON.Color3(0.855, 0.549, .936)
+                });
+                keys.push({
+                    frame: 634,
+                    value: new BABYLON.Color3(0, 1, 1)
+                });
 
                 circle_lights.setKeys(keys);
                 mesh1.animations.push(circle_lights);
@@ -321,11 +353,13 @@
                     switch (kbInfo.type) {
                         case BABYLON.KeyboardEventTypes.KEYDOWN:
                             switch (kbInfo.event.key) {
+                                case "a":
+                                    scene.beginAnimation(circle1, 0, 634, true, 5);
+                                    scene.beginAnimation(circle2, 0, 634, true, 5);
+                                    break
                                 case " ":
                                     let counter1 = 0;
                                     music.play();
-                                    // scene.beginAnimation(circle1, 0, 634, true);
-                                    // scene.beginAnimation(circle2, 0, 634, true);
                                     let a = 0;
                                     //simple_emit(quarter1, 0, new BABYLON.Color3(0,1,1));
                                     for (let i = 0; i < 4; i += 1) {
@@ -359,33 +393,86 @@
                                         simple_emit(quarter4, 16830 + d, BABYLON.Color3.White());
                                         d += 1320;
                                     }
-                                    disappearing_beam(every_other1, 21120, new BABYLON.Color3(0.54, 0.96, 0.98), 2.5, 2.64);
+                                    disappearing_beam(every_other1, 21120, cyan, BABYLON.Color3.Magenta(), 2.5, 2.64);
                                     let e = 0
                                     for (let i = 0; i < 16; i += 1) {
-                                        simple_emit(every_other2, 21120 + e, new BABYLON.Color3(0, 1, 0.87));
+                                        simple_emit(every_other2, 21120 + e, BABYLON.Color3.Magenta());
                                         e += 330;
                                     }
-                                    disappearing_beam(every_other2, 26400, new BABYLON.Color3(0, 1, 0.87), 2.5, 2.64);
+                                    disappearing_beam(every_other2, 26400, cyan, BABYLON.Color3.Magenta(), 2.5, 2.64);
                                     let f = 0
                                     for (let i = 0; i < 16; i += 1) {
-                                        simple_emit(every_other1, 26400 + f, new BABYLON.Color3(0.54, 0.96, 0.98));
+                                        simple_emit(every_other1, 26400 + f, cyan);
                                         f += 330;
                                     }
-                                    disappearing_beam(every_other1, 31680, new BABYLON.Color3(0.54, 0.96, 0.98), 2.5, 2.64);
+                                    disappearing_beam(every_other1, 31680, cyan, BABYLON.Color3.Magenta(), 2.5, 2.64);
                                     let g = 0
                                     for (let i = 0; i < 16; i += 1) {
-                                        simple_emit(every_other2, 31680 + g, new BABYLON.Color3(0, 1, 0.87));
+                                        simple_emit(every_other2, 31680 + g, BABYLON.Color3.Magenta());
                                         g += 330;
                                     }
-                                    disappearing_beam(every_other2, 36960, new BABYLON.Color3(0, 1, 0.87), 2.5, 2.64);
+                                    disappearing_beam(every_other2, 36960, cyan, BABYLON.Color3.Magenta(), 2.5, 2.64);
                                     let h = 0
                                     for (let i = 0; i < 16; i += 1) {
-                                        simple_emit(every_other1, 36960 + h, new BABYLON.Color3(0.54, 0.96, 0.98));
+                                        simple_emit(every_other1, 36960 + h, cyan);
                                         h += 330;
                                     }
+                                    disappearing_beam(every_other1, 42240, BABYLON.Color3.Green(), BABYLON.Color3.Yellow(), 2.5, 2.64);
+                                    let j = 0
+                                    for (let i = 0; i < 16; i += 1) {
+                                        simple_emit(every_other2, 42240 + j, BABYLON.Color3.Yellow());
+                                        j += 330;
+                                    }
+                                    disappearing_beam(every_other2, 47520, BABYLON.Color3.Yellow(), BABYLON.Color3.Green(), 2.5, 2.64);
+                                    let k = 0
+                                    for (let i = 0; i < 16; i += 1) {
+                                        simple_emit(every_other1, 47520 + k, BABYLON.Color3.Green());
+                                        k += 330;
+                                    }
+                                    disappearing_beam(every_other1, 52800, BABYLON.Color3.Green(), BABYLON.Color3.Yellow(), 3, 2.64);
+                                    let l = 0
+                                    for (let i = 0; i < 16; i += 1) {
+                                        simple_emit(every_other2, 52800 + l, BABYLON.Color3.Yellow());
+                                        l += 330;
+                                    }
+                                    disappearing_beam(every_other2, 58080, BABYLON.Color3.Yellow(), BABYLON.Color3.Green(), 4, 2.64);
+                                    let m = 0
+                                    for (let i = 0; i < 16; i += 1) {
+                                        simple_emit(every_other1, 58080 + m, BABYLON.Color3.Green());
+                                        m += 330;
+                                    }
+                                    
+                                    disappearing_beam(all, 63360, BABYLON.Color3.Red(), BABYLON.Color3.Yellow(), 2.5, 2.64);
+                                    disappearing_beam(all, 68640, BABYLON.Color3.Magenta(), BABYLON.Color3.Green(), 2.5, 2.64);
+                                    disappearing_beam(all, 73920, BABYLON.Color3.Red(), BABYLON.Color3.Yellow(), 2.5, 2.64);
+                                    disappearing_beam(all, 79200, BABYLON.Color3.Magenta(), BABYLON.Color3.Green(), 2.5, 2.64);
 
-                                    // simple_emit(all, 400, new BABYLON.Color3(0.138 * 3, 0.255 * 3, 0.251 * 3), 6);
-                                    // disappearing_beam(all, 1500, new BABYLON.Color3.White(), 2.2);
+                                    let n = 0
+                                    for (let i = 0; i < 16; i += 1) {
+                                        simple_emit(all, 84480 + n, cyan);
+                                        n += 330;
+                                    }
+                                    let o = 0
+                                    for (let i = 0; i < 16; i += 1) {
+                                        simple_emit(all, 89760 + o, BABYLON.Color3.Magenta());
+                                        o += 330;
+                                    }
+                                    let p = 0
+                                    for (let i = 0; i < 16; i += 1) {
+                                        simple_emit(all, 95040 + p, cyan);
+                                        p += 330;
+                                    }
+                                    let q = 0
+                                    for (let i = 0; i < 16; i += 1) {
+                                        simple_emit(all, 100320 + q, BABYLON.Color3.Magenta());
+                                        q += 330;
+                                    }
+                                    let r = 0
+                                    for (let i = 0; i < 120; i += 1) {
+                                        simple_emit(all, 105600 + r, BABYLON.Color3.Green());
+                                        simple_emit(all, 106260 + r, BABYLON.Color3.White());
+                                        r += 660;
+                                    }
                                     break
                             }
                             break;
@@ -404,7 +491,7 @@
 
                 cartMaterial = new BABYLON.StandardMaterial("cart_mat", scene);
                 cartMaterial.emissiveColor = color;
-                
+
 
                 var front = tube_circle(12.5);
                 var back = tube_circle(12.5);
@@ -420,8 +507,8 @@
                 front_window.material = cartMaterial;
                 back_window.material = cartMaterial;
 
-                var rotateBarPoints = [new BABYLON.Vector3(0,0,-5), new BABYLON.Vector3(0,0,5)]
-                var rotateTube = new BABYLON.MeshBuilder.CreateTube("rotate", {path: rotateBarPoints}, scene)
+                var rotateBarPoints = [new BABYLON.Vector3(0, 0, -5), new BABYLON.Vector3(0, 0, 5)]
+                var rotateTube = new BABYLON.MeshBuilder.CreateTube("rotate", { path: rotateBarPoints }, scene)
 
                 rotateTube.addChild(front);
                 rotateTube.addChild(back);
@@ -439,64 +526,64 @@
                 animWheel.setKeys(wheelKeys);
                 //seat1.animations = [animWheel];
                 //scene.beginAnimation(center, 0, 30, true);
-                
+
                 seat1 = seat(new BABYLON.Color3(0.855, 0.549, .936));
-                seat1.position = new BABYLON.Vector3(0,25,3);
+                seat1.position = new BABYLON.Vector3(0, 25, 3);
                 parent.addChild(seat1);
                 seat1.animations = [animWheel];
                 scene.beginAnimation(seat1, 0, 30, true);
                 seat2 = seat(new BABYLON.Color3(0.855, 0.549, .936));
-                seat2.position = new BABYLON.Vector3(0,175,3);
+                seat2.position = new BABYLON.Vector3(0, 175, 3);
                 parent.addChild(seat2);
                 seat2.animations = [animWheel];
                 scene.beginAnimation(seat2, 0, 30, true);
                 seat3 = seat(cyan);
-                seat3.position = new BABYLON.Vector3(-75,100,3);
+                seat3.position = new BABYLON.Vector3(-75, 100, 3);
                 parent.addChild(seat3);
                 seat3.animations = [animWheel];
                 scene.beginAnimation(seat3, 0, 30, true);
                 seat4 = seat(cyan);
-                seat4.position = new BABYLON.Vector3(75,100,3);
+                seat4.position = new BABYLON.Vector3(75, 100, 3);
                 parent.addChild(seat4);
                 seat4.animations = [animWheel];
                 scene.beginAnimation(seat4, 0, 30, true);
                 seat5 = seat(cyan);
-                seat5.position = new BABYLON.Vector3(37.5,164.952,3);
+                seat5.position = new BABYLON.Vector3(37.5, 164.952, 3);
                 parent.addChild(seat5);
                 seat5.animations = [animWheel];
                 scene.beginAnimation(seat5, 0, 30, true);
                 seat6 = seat(new BABYLON.Color3(0.855, 0.549, .936));
-                seat6.position = new BABYLON.Vector3(64.952,137.5,3);
+                seat6.position = new BABYLON.Vector3(64.952, 137.5, 3);
                 parent.addChild(seat6);
                 seat6.animations = [animWheel];
                 scene.beginAnimation(seat6, 0, 30, true);
                 seat7 = seat(new BABYLON.Color3(0.855, 0.549, .936));
-                seat7.position = new BABYLON.Vector3(64.952,62.5,3);
+                seat7.position = new BABYLON.Vector3(64.952, 62.5, 3);
                 parent.addChild(seat7);
                 seat7.animations = [animWheel];
                 scene.beginAnimation(seat7, 0, 30, true);
                 seat8 = seat(cyan);
-                seat8.position = new BABYLON.Vector3(37.5,35.048,3);
+                seat8.position = new BABYLON.Vector3(37.5, 35.048, 3);
                 parent.addChild(seat8);
                 seat8.animations = [animWheel];
                 scene.beginAnimation(seat8, 0, 30, true);
                 seat9 = seat(cyan);
-                seat9.position = new BABYLON.Vector3(-37.5,164.952,3);
+                seat9.position = new BABYLON.Vector3(-37.5, 164.952, 3);
                 parent.addChild(seat9);
                 seat9.animations = [animWheel];
                 scene.beginAnimation(seat9, 0, 30, true);
                 seat10 = seat(new BABYLON.Color3(0.855, 0.549, .936));
-                seat10.position = new BABYLON.Vector3(-64.952,137.5,3);
+                seat10.position = new BABYLON.Vector3(-64.952, 137.5, 3);
                 parent.addChild(seat10);
                 seat10.animations = [animWheel];
                 scene.beginAnimation(seat10, 0, 30, true);
                 seat11 = seat(new BABYLON.Color3(0.855, 0.549, .936));
-                seat11.position = new BABYLON.Vector3(-64.952,62.5,3);
+                seat11.position = new BABYLON.Vector3(-64.952, 62.5, 3);
                 parent.addChild(seat11);
                 seat11.animations = [animWheel];
                 scene.beginAnimation(seat11, 0, 30, true);
                 seat12 = seat(cyan);
-                seat12.position = new BABYLON.Vector3(-37.5,35.048,3);
+                seat12.position = new BABYLON.Vector3(-37.5, 35.048, 3);
                 parent.addChild(seat12);
                 seat12.animations = [animWheel];
                 scene.beginAnimation(seat12, 0, 30, true);
@@ -546,6 +633,9 @@
                 seats(center);
                 center.addRotation(0, Math.PI, 0);
 
+                center.position.y = 165;
+                center.position.z = 32.5
+
                 lightSequence(support_beam_list, circle1, circle2);
 
                 const animWheel = new BABYLON.Animation("wheelAnimation", "rotation.z", 30, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE);
@@ -557,6 +647,7 @@
 
             stands();
             ferris_wheel();
+            streetLights();
 
             return scene;
         }
