@@ -24,7 +24,6 @@
 
     <script src="https://preview.babylonjs.com/babylon.js"></script>
     <script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
-    <script src="grid.js"></script>
 
     <script>
         var canvas = null;
@@ -220,6 +219,19 @@
                     light.addColorGradient(0, color1);
                     light.addColorGradient(1, color2);
                 }
+                for (var mesh in mesh_list) {
+                    light = lights(mesh_list[mesh]);
+                    // light.color1 = color;
+                    // light.color2 = color;
+                    light.minSize = size;
+                    light.maxSize = size;
+                    light.start(offset+20);
+                    light.targetStopDuration = length;
+                    light.addEmitRateGradient(0, 50);
+                    light.addEmitRateGradient(1, 50);
+                    light.addColorGradient(0, color1);
+                    light.addColorGradient(1, color2);
+                }
             }
 
             function simple_emit(mesh_list, offset, color) {
@@ -245,7 +257,28 @@
                     // light.addColorGradient(0, BABYLON.Color3.Green());
                     // light.addColorGradient(1, BABYLON.Color3.Magenta());
                 }
-
+                for (let mesh in mesh_list) {
+                    light = lights(mesh_list[mesh]);
+                    light.color1 = color;
+                    light.color2 = color;
+                    light.start(offset + 40);
+                    light.targetStopDuration = 0.04;
+                    light.addEmitRateGradient(0, 100);
+                    light.addEmitRateGradient(1, 100);
+                    // light.addColorGradient(0, BABYLON.Color3.Green());
+                    // light.addColorGradient(1, BABYLON.Color3.Magenta());
+                }
+                for (let mesh in mesh_list) {
+                    light = lights(mesh_list[mesh]);
+                    light.color1 = color;
+                    light.color2 = color;
+                    light.start(offset+50);
+                    light.targetStopDuration = 0.04;
+                    light.addEmitRateGradient(0, 100);
+                    light.addEmitRateGradient(1, 100);
+                    // light.addColorGradient(0, BABYLON.Color3.Green());
+                    // light.addColorGradient(1, BABYLON.Color3.Magenta());
+                }
             }
 
             function lightSequence(mesh_list, mesh1, mesh2) {
